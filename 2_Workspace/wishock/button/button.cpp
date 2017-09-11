@@ -1,4 +1,8 @@
+/***************************************************************************************
+* INCLUDE
+***************************************************************************************/
 #include <ESP8266WiFi.h>
+#include "button.h"
 
 /***************************************************************************************
 * GLOBAL VARIABLES
@@ -43,6 +47,28 @@ bool buttonConfigCheck(void){
                   return true;
                 }
             }
+        }
+    }
+    return false;
+}
+/**
+ * @brief       Button config check
+ * @param       None
+ * @retval      true
+ *              false
+ */
+bool buttonDeviceCheck(void)
+{
+    static uint8_t _last_status = HIGH;
+    static uint32_t _last_time = 0;
+    if(digitalRead(PIN_BUTTON_CONTROL) != _last_status){
+        _last_time = millis();
+    }
+    if((millis() - _last_status) > 300)
+    {
+        if(digitalRead(PIN_BUTTON_CONTROL) != _last_status){
+            _last_status = digitalRead(PIN_BUTTON_CONTROL);
+            return true;
         }
     }
     return false;
