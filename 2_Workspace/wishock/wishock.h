@@ -4,17 +4,23 @@
 /*************************************************/
 /*                  DEFINE SYMBOL                */
 /*************************************************/
-#define BUTTON_CONFIG             13
-#define BUTTON_CONTROL            5
-#define LED                       4
-#define DEVICE                    3
-#define EEPROM_ADDRESS            0x10
-#define DEBUG                     0
+#define PIN_BUTTON_CONFIG             13
+#define PIN_BUTTON_CONTROL            5
+#define PIN_LED                       4
+#define PIN_DEVICE                    3
+#define EEPROM_ADDRESS                0x10
+#define DEBUG            
 
-enum finite_state_machine {
-  STATE_CONFIG = 0,
-  STATE_CONTROL,
-};
+typedef enum {
+  STATE_CONFIG  = 0,
+  STATE_CONTROL = ~STATE_CONFIG,
+}fsm_t;
+
+typedef enum {
+  LED_STATUS_BLINK = 0,
+  LED_STATUS_ON ,
+  LED_STATUS_OFF,
+}led_status_t;
 
 typedef struct {
   String ID;
@@ -25,14 +31,17 @@ typedef struct {
 /*************************************************/
 /*                  GLOBAL VARIABLE              */
 /*************************************************/
-finite_state_machine g_state = STATE_CONTROL;
+fsm_t g_state = STATE_CONTROL;
 json_data_t g_data;
 os_timer_t Timer;
+led_status_t LED_FLAG = LED_STATUS_BLINK;
 
 const char* mqtt_server = "iot.eclipse.org";
 String topicIn = "";
 String topicOut = "";
 
+WiFiClient espClient;
+PubSubClient client(espClient);
 /*************************************************/
 /*                  FUCTION PROTOTYPE            */
 /*************************************************/
@@ -50,12 +59,12 @@ void ConfigButton_ISR(void);
 /*
  *  Config Wifi, use smartconfig
  */
-void func_state_config(void);
+void func_config(void);
 
 /*
  * connect to wifi, receive data, process and respond
  */
-void func_state_control(void);
+void func_control(void);
 
 /*
  *  get macID of ESP8266
@@ -80,16 +89,19 @@ int pars_json(String json);
 /*
  *  Write byte toEEPROM with ADDRESS = 0x10
  */
-void EEPROM_Write (unsigned char value);
+void EEPROM_Write_ConfigFlag (unsigned char value);
 
 /*
  * Read EEPROM with ADDRESS = 0x10
  */
-byte EEPROM_Read (void);
+byte EEPROM_Read_ConfigFlag (void);
 
 /*
  * Setup topic for MQTT
  */
 void Topic_Set (void);
+
+void Led_On (void);
+void Led_Off (void);
  
 #endif
