@@ -22,8 +22,7 @@ void setup() {
   int g_flag_config = 0;
   System_Init();
   Topic_Set();
-  Serial.println(topicIn);
-  Serial.println(topicOut);
+
   /* check that has Wishock configed for the first time yet? */
   /* 0x05: configed, another: not confied yet */
   if (EEPROM_Read_ConfigFlag() == 0x05)
@@ -33,9 +32,9 @@ void setup() {
   if (g_flag_config == 0)
     g_state = STATE_CONFIG;
   else g_state = STATE_CONTROL;
-  String data =  "{\"ID\":\"gps\",\"FUNC\":aa,\"DATA\":\"ngia\"}";
-  pars_json(data);
 
+    client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
 }
 
 
@@ -56,12 +55,12 @@ void loop() {
 void System_Init (void)
 {
   Serial.begin(115200);
-  pinMode(PIN_BUTTON_CONFIG, INPUT_PULLUP);
-  /* set Interrupt for BUTTON_CONFIG */
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_CONFIG), ConfigButton_ISR, FALLING);
-  pinMode(PIN_BUTTON_CONTROL, INPUT);
-  pinMode(PIN_LED, OUTPUT);
-  pinMode(PIN_DEVICE, OUTPUT);
+//  pinMode(PIN_BUTTON_CONFIG, INPUT_PULLUP);
+//  /* set Interrupt for BUTTON_CONFIG */
+//  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_CONFIG), ConfigButton_ISR, FALLING);
+//  pinMode(PIN_BUTTON_CONTROL, INPUT);
+//  pinMode(PIN_LED, OUTPUT);
+//  pinMode(PIN_DEVICE, OUTPUT);
 
   /* Init timer */
   os_timer_disarm(&Timer);
@@ -102,8 +101,49 @@ void func_config(void)
 
 void func_control (void)
 {
- 
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    if (!client.connected())
+    {
+      //reconnect();
+      if (client.connect("ESP8266"))
+      {
+        Serial.println("sub");
+        client.subscribe(topicIn, 0);
+      }
+    }
+    if (client.connected())
+    {
+      client.loop();
+      Serial.println("loop");
+    }
+  }
+  else Wifi_Connect();
+  delay(1000);
+  //client.publish(topicOut, "hello world");
+  g_state = STATE_CONTROL;
 }
+
+//void reconnect(void) {
+//  // Loop until we're reconnected
+//  while (!client.connected()) {
+//    Serial.print("Attempting MQTT connection...");
+//    // Attempt to connect
+//    if (client.connect("ESP8266Client")) {
+//      Serial.println("connected");
+//      // Once connected, publish an announcement...
+//      //client.publish(topicOut, "hello world");
+//      // ... and resubscribe
+//      client.subscribe(topicIn);
+//    } else {
+//      Serial.print("failed, rc=");
+//      Serial.print(client.state());
+//      Serial.println(" try again in 5 seconds");
+//      // Wait 5 seconds before retrying
+//      delay(2000);
+//    }
+//  }
+//}
 
 void ConfigButton_ISR (void)
 {
@@ -132,13 +172,18 @@ String Get_macID (void)
   String val;
   byte mac[6];
   WiFi.macAddress(mac);
-  val = String(mac[0], HEX) + String(mac[1], HEX) + String(mac[2], HEX) + String(mac[3], HEX) + String(mac[4], HEX) + String(mac[5], HEX);
+  for (int i = 0; i < 6; i++)
+  {
+    if (mac[i] < 0x10)
+      val += '0' + String(mac[i], HEX);
+    else val += String(mac[i], HEX);
+  }
   return val;
 }
 
 void Timer_ISR (void)
 {
-  //Serial.println("timer");
+
   if (LED_FLAG == LED_STATUS_BLINK)
   {
      int temp = digitalRead(PIN_LED);
@@ -161,6 +206,7 @@ void Wifi_Connect (void)
 
     delay(100);
   }
+
 }
 
 int pars_json(String json)
@@ -196,8 +242,11 @@ byte EEPROM_Read_ConfigFlag (void)
 void Topic_Set (void)
 {
   String nameTopic = "ESP" + Get_macID();
-  topicIn  = nameTopic + "/master";
-  topicOut = nameTopic + "/slave"; 
+  String vTopic = nameTopic + "/master";
+  vTopic.toCharArray(topicIn, 24);
+  vTopic = nameTopic + "/slave";
+  vTopic.toCharArray(topicOut, 23);     
+
 }
 
 void Led_On (void)

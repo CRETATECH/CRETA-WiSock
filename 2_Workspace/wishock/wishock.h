@@ -37,8 +37,8 @@ os_timer_t Timer;
 led_status_t LED_FLAG = LED_STATUS_BLINK;
 
 const char* mqtt_server = "iot.eclipse.org";
-String topicIn = "";
-String topicOut = "";
+char topicIn[25];
+char topicOut[25] ;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -103,5 +103,5 @@ void Topic_Set (void);
 
 void Led_On (void);
 void Led_Off (void);
- 
+void reconnect(void);
 #endif
