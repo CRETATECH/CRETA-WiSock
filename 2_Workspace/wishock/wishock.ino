@@ -83,6 +83,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void func_config(void)
 {
+  Serial.println("Start config..."); 
   LED_FLAG = LED_STATUS_OFF;
   WiFi.beginSmartConfig();
   while(1)
@@ -95,7 +96,8 @@ void func_config(void)
   EEPROM_Write_ConfigFlag (0x05);
   g_state = STATE_CONTROL;
   if (EEPROM_Read_ConfigFlag() == 0x05)
-    Serial.println("luu roi"); 
+    Serial.println("Flag saved!!!");
+  Serial.println("Config done!!!");   
 }
 
 void func_control (void)
@@ -105,7 +107,24 @@ void func_control (void)
 
 void ConfigButton_ISR (void)
 {
-  
+  static uint32_t _last_pulse = 0;
+  static uint32_t _button_pressed = 1;
+  if(0 == _last_pulse)
+    _last_pulse = millis();
+  if(STATE_CONFIG != g_state)
+  {
+    if((millis() - _last_pulse) > 3000)
+    {
+      if(_button_pressed == 0)
+        _button_pressed = 1;
+      else
+      {
+        _button_pressed = 0;
+        g_state = STATE_CONFIG;
+      }
+    }
+  }
+  _last_pulse = millis();
 }
 
 String Get_macID (void)
