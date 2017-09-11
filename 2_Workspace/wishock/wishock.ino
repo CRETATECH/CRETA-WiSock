@@ -196,14 +196,9 @@ void Timer_ISR (void)
 
 void Wifi_Connect (void)
 {
-  Serial.println("bat dau ket noi wifi");
   WiFi.begin();
   while (WiFi.status() != WL_CONNECTED)
   {
-    #ifdef DEBUG
-      Serial.print(".");
-    #endif
-
     delay(100);
   }
 

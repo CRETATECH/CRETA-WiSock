@@ -5,12 +5,15 @@
 #include "button.h"
 
 /***************************************************************************************
-* GLOBAL VARIABLES
+* PUBLIC VARIABLES
 ***************************************************************************************/
 bool isButtonPressed = false;
 uint32_t buttonLastPressed = 0;
 extern fsm_t g_state;
 
+/***************************************************************************************
+* PUBLIC VARIABLES
+***************************************************************************************/
 /**
  * @brief       Init all button
  * @param       None
@@ -57,15 +60,13 @@ bool buttonConfigCheck(void){
  * @retval      true
  *              false
  */
-bool buttonDeviceCheck(void)
-{
+bool buttonDeviceCheck(void){
     static uint8_t _last_status = HIGH;
     static uint32_t _last_time = 0;
     if(digitalRead(PIN_BUTTON_CONTROL) != _last_status){
         _last_time = millis();
     }
-    if((millis() - _last_status) > 300)
-    {
+    if((millis() - _last_status) > 300){
         if(digitalRead(PIN_BUTTON_CONTROL) != _last_status){
             _last_status = digitalRead(PIN_BUTTON_CONTROL);
             return true;
