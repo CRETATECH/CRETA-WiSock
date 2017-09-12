@@ -9,5 +9,7 @@ void mqttCreateTopic(void);
 void mqttSubscribe(void);
 int mqttConnect (void);
 int mqttConnected (void);
-void mqttPublish (void);
+void mqttPublish (String jsonOut);
+void mqttLoop (void);
+String Get_macID (void);
 #endif

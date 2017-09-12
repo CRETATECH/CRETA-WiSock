@@ -11,18 +11,16 @@
 /*************************************************/
 /*                  EXTERN VARIABLE              */
 /*************************************************/
-extern char topicIn[25];
-extern char topicOut[25];
-extern WiFiClient espClient;
-extern PubSubClient client;
+char topicIn[25];
+char topicOut[25];
+WiFiClient espClient;
+PubSubClient client(espClient);
+const char* mqtt_server = "iot.eclipse.org";
 /*************************************************/
 /*                  LOCAL  VARIABLE              */
 /*************************************************/
 char clientID[25];
-String ID = "";
-String func = "";
-String addr ="";
-String data = "";
+
 /*************************************************/
 /*                  FUCTION PROTOTYPE            */
 /*************************************************/
@@ -59,6 +57,8 @@ void mqttCreateTopic(void)
   Serial.print("topicOut: ");
   Serial.println(topicOut);
   mqttCreateClientID ();
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
 }
 
 void mqttSubscribe(void)
@@ -76,9 +76,16 @@ int mqttConnected (void)
   return client.connected();
 }
 
-void mqttPublish (void)
+void mqttPublish (String jsonOut)
 {
-  
+  char dataOut[100];
+  jsonOut.toCharArray(dataOut,jsonOut.length() + 1);
+  client.publish(topicOut, dataOut);
+}
+
+void mqttLoop (void)
+{
+  client.loop();
 }
 /*************************************************/
 /*                  LOCAL FUCTION                */

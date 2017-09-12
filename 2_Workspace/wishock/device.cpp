@@ -66,6 +66,6 @@ void ledToggle(void){
  * @retval      HIGH
  *              LOW
  */
-uint8_t deviceStatus(void){
+int deviceStatus(void){
     return digitalRead(PIN_DEVICE);
 }

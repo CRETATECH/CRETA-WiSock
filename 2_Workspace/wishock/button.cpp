@@ -13,7 +13,7 @@ uint32_t buttonLastPressed = 0;
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
-extern fsm_t g_state;
+extern fsm_t gState;
 
 /***************************************************************************************
 * PUBLIC FUNCTION
@@ -33,7 +33,7 @@ void buttonInit(void){
  * @param       None
  */
 void buttonConfigISRHandler(void){
-    if(STATE_CONFIG != g_state){
+    if(STATE_CONFIG != gState){
         isButtonPressed = true;
         buttonLastPressed = millis();
     }

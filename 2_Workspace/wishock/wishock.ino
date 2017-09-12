@@ -16,19 +16,19 @@
 /*************************************************/
 /*                  GLOBAL VARIABLE              */
 /*************************************************/
-os_timer_t Timer;
-
-WiFiClient espClient;
-PubSubClient client(espClient);
-fsm_t g_state = STATE_CONTROL;
 
 
-led_status_t LED_FLAG = LED_STATUS_BLINK;
+//WiFiClient espClient;
+//PubSubClient client(espClient);
 
-const char* mqtt_server = "iot.eclipse.org";
 
-char topicIn[25];
-char topicOut[25];
+
+//led_status_t LED_FLAG = LED_STATUS_BLINK;
+
+//const char* mqtt_server = "iot.eclipse.org";
+
+//char topicIn[25];
+//char topicOut[25];
 /*************************************************/
 /*                  MAIN FUCTION                 */
 /*************************************************/

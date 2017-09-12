@@ -34,16 +34,13 @@ void stateControl(void);
 * LOCAL VARIABLES
 ***************************************************************************************/
 fsm_t gState = STATE_CONTROL;
-
-
+os_timer_t Timer;
+led_status_t LED_FLAG;
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
-extern led_status_t LED_FLAG;
-extern WiFiClient espClient;
-extern PubSubClient client;
-extern os_timer_t Timer;
-extern const char* mqtt_server;
+
+
 /***************************************************************************************
 * PUBLIC FUNCTIONS
 ***************************************************************************************/
@@ -79,8 +76,7 @@ void stateSetup (void)
     os_timer_setfn(&Timer, (os_timer_func_t *)Timer_ISR, NULL);
     os_timer_arm(&Timer, 200, 1);
     /* Anything else here */
-    client.setServer(mqtt_server, 1883);
-    client.setCallback(callback);
+
 
     protocolInit();
     mqttCreateTopic();
@@ -127,7 +123,7 @@ void stateControl(void)
       }
       if (mqttConnect())
       {
-        client.loop();
+        mqttLoop();
       }
     }
     else Wifi_Connect();
