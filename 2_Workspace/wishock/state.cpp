@@ -157,13 +157,12 @@ void Wifi_Connect (void)
 
 void Timer_ISR (void)
 {
-  Serial.println("Timer");
-//  if (LED_FLAG == LED_STATUS_BLINK)
-//  {
-//     int temp = digitalRead(PIN_LED);
-//     digitalWrite(PIN_LED, !temp);   
-//  }
-//  else if (LED_FLAG == LED_STATUS_ON)
-//    Led_On();
-//  else Led_Off();
+  //Serial.println("Timer");
+  if (LED_FLAG == LED_STATUS_BLINK)
+  {
+    ledToggle();
+  }
+  else if (LED_FLAG == LED_STATUS_ON)
+    ledOn();
+  else ledOff();
 }

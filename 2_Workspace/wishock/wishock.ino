@@ -43,35 +43,8 @@ void loop() {
 
 }
 
-/*************************************************/
-/*                  LOCAL FUCTION                */
-/*************************************************/
 
 
 
-
-//void ConfigButton_ISR (void)
-//{
-//  static uint32_t _last_pulse = 0;
-//  static uint32_t _button_pressed = 1;
-//  if(0 == _last_pulse)
-//    _last_pulse = millis();
-//  if(STATE_CONFIG != g_state)
-//  {
-//    if((millis() - _last_pulse) > 3000)
-//    {
-//      if(_button_pressed == 0)
-//        _button_pressed = 1;
-//      else
-//      {
-//        _button_pressed = 0;
-//        g_state = STATE_CONFIG;
-//      }
-//    }
-//  }
-//  _last_pulse = millis();
-//}
-
-//}
 
 

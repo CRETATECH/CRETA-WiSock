@@ -7,7 +7,7 @@
 #include "wishock.h"
 
 /*************************************************/
-/*                  GLOBAL VARIABLE              */
+/*                  EXTERN VARIABLE              */
 /*************************************************/
 extern char topicIn[25];
 extern char topicOut[25];
