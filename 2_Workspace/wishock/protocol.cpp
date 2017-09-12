@@ -1,6 +1,22 @@
-
+/***************************************************************************************
+* INCLUDE
+***************************************************************************************/
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
+#include "wishock.h"
+#include "button.h"
+#include "device.h"
+/***************************************************************************************
+* EXTERN VARIABLES
+***************************************************************************************/
+extern String ID;
+extern String func;
+extern String addr;
+extern String data;
+
+/***************************************************************************************
+* PUBLIC FUNCTION
+***************************************************************************************/
 void protocolInit(void)
 {
 
@@ -23,3 +39,11 @@ int pars_json(String json)
   Serial.println("pars ok");
   return 1; 
 }
+
+void DataProcess (String recv_json)
+{
+  /* parse json */
+  pars_json(recv_json);
+  /* process */
+}
+

@@ -9,5 +9,5 @@ void mqttCreateTopic(void);
 void mqttSubscribe(void);
 int mqttConnect (void);
 int mqttConnected (void);
-
+void mqttPublish (void);
 #endif

@@ -22,12 +22,6 @@ typedef enum {
   LED_STATUS_OFF,
 }led_status_t;
 
-//typedef struct {
-//  String ID;
-//  String func;
-//  String addr;
-//  String data; 
-//}json_data_t;
 
 
 #endif

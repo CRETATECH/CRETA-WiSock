@@ -11,5 +11,5 @@
 ***************************************************************************************/
 void protocolInit(void);
 int pars_json(String json);
-
+void DataProcess (String recv_json);
 #endif
