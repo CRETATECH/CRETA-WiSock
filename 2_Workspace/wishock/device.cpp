@@ -24,24 +24,28 @@ void deviceInit(void){
  */
 void deviceOn(void){
     digitalWrite(PIN_DEVICE, LOW);
+    Serial.println("device on");
 }
 /**
  * Turn device OFF
  */
 void deviceOff(void){
     digitalWrite(PIN_DEVICE, HIGH);
+    Serial.println("device off");
 }
 /**
  * Turn led ON
  */
 void ledOn(void){
     digitalWrite(PIN_LED, LOW);
+    Serial.println("led off");
 }
 /**
  * Turn led OFF
  */
 void ledOff(void){
     digitalWrite(PIN_LED, HIGH);
+    Serial.println("led on");
 }
 /**
  * Toggle device
@@ -57,9 +61,9 @@ void deviceToggle(void){
  */
 void ledToggle(void){
     if(digitalRead(PIN_LED) == HIGH)
-        deviceOn();
+        ledOn();
     else
-        deviceOff();
+        ledOff();
 }
 /**
  * @brief       Return device status

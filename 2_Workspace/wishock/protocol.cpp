@@ -54,7 +54,7 @@ int pars_json(String json)
 String CreateJson (String pFunc, String pAddr, String pData)
 {
   
-   String a = "{\"ID\" : \"" + Get_macID() + "\", \"FUNC\" : \"" + pFunc + "\", \"ADDR\" : \"" + pAddr + "\", \"DATA\" : \"" + pData + "\"}";
+   String a = "{\"ID\" : \"ESP"  + Get_macID() + "\", \"FUNC\" : \"" + pFunc + "\", \"ADDR\" : \"" + pAddr + "\", \"DATA\" : \"" + pData + "\"}";
    return a;
 }
 
@@ -66,6 +66,7 @@ void DataProcess (String recv_json)
   /* process */
   if (func == "Ctrl")
   {
+    Serial.println("func ctrl");
     temp = CtrlFunc_Process();
     if (temp == PROCESS_NORMAL)
     {
@@ -80,6 +81,7 @@ void DataProcess (String recv_json)
   }
   else if (func == "Data")
   {
+    Serial.println("func data");
     temp  = DataFunc_Process();
     if (temp == PROCESS_NORMAL)
     {
@@ -90,7 +92,7 @@ void DataProcess (String recv_json)
   }
   else
   {
-    mqttPublish(CreateJson("Ctrl", "1", "ErrFrame"));    
+    mqttPublish(CreateJson("Error", "1", "ErrFrame"));    
   }
 }
 
@@ -121,7 +123,7 @@ int CtrlFunc_Process (void)
 
 int DataFunc_Process (void)
 {
-  if (data == "1")
+  if (addr == "1")
   {
     if (deviceStatus() == DEVICE_ON)
       data = "On";

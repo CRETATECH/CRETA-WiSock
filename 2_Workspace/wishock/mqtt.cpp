@@ -35,13 +35,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print(topic);
   Serial.print("] ");
   for (int i = 0; i < length; i++) {
-    //recv_data[i] = (char)payload[i];
     mqtt_recvdata += String((char)payload[i]);
-    //Serial.print((char)payload[i]);
   }
   Serial.println(mqtt_recvdata);
   Serial.println();
-  //pars_json(mqtt_recvdata);
   DataProcess(mqtt_recvdata);
 }
 
@@ -63,7 +60,8 @@ void mqttCreateTopic(void)
 
 void mqttSubscribe(void)
 {
-   client.subscribe(topicIn, 0); 
+   client.subscribe(topicIn, 0);
+   Serial.println("subscribe"); 
 }
 
 int mqttConnect (void)
@@ -81,6 +79,8 @@ void mqttPublish (String jsonOut)
   char dataOut[100];
   jsonOut.toCharArray(dataOut,jsonOut.length() + 1);
   client.publish(topicOut, dataOut);
+  Serial.print("Publish json: ");
+  Serial.print(dataOut);
 }
 
 void mqttLoop (void)
