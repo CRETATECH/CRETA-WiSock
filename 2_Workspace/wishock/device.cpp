@@ -38,14 +38,12 @@ void deviceOff(void){
  */
 void ledOn(void){
     digitalWrite(PIN_LED, LOW);
-    Serial.println("led off");
 }
 /**
  * Turn led OFF
  */
 void ledOff(void){
     digitalWrite(PIN_LED, HIGH);
-    Serial.println("led on");
 }
 /**
  * Toggle device

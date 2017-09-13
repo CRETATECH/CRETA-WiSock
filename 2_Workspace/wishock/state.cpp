@@ -27,15 +27,15 @@
 void EEPROM_Write_ConfigFlag(uint8_t pData);
 void Wifi_Connect(void);
 uint8_t EEPROM_Read_ConfigFlag(void);
-void Timer_ISR (void);
+void TimerISRHandler (void);
 void stateConfig(void);
 void stateControl(void);
 /***************************************************************************************
 * LOCAL VARIABLES
 ***************************************************************************************/
 fsm_t gState = STATE_CONTROL;
-os_timer_t Timer;
-led_status_t LED_FLAG;
+os_timer_t gTimer;
+led_status_t gLedFlag;
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
@@ -64,7 +64,7 @@ void stateUpdate(void){
 
 void stateSetup (void)
 {
-    int g_flag_config = 0;
+    int vFlagConfig = 0;
     /* Setup serial */
     Serial.begin(115200);
     /* Setup button */
@@ -72,35 +72,39 @@ void stateSetup (void)
     /* Setup device */
     deviceInit();
     /* Setup timer */
-    os_timer_disarm(&Timer);
-    os_timer_setfn(&Timer, (os_timer_func_t *)Timer_ISR, NULL);
-    os_timer_arm(&Timer, 200, 1);
+    os_timer_disarm(&gTimer);
+    os_timer_setfn(&gTimer, (os_timer_func_t *)TimerISRHandler, NULL);
+    os_timer_arm(&gTimer, 200, 1);
     /* Anything else here */
 
 
     protocolInit();
     mqttCreateTopic();
     if (EEPROM_Read_ConfigFlag() == 0x05)
-      g_flag_config = 1; // configed
-    else g_flag_config = 0; // not configed yet
+      vFlagConfig = 1; // configed
+    else vFlagConfig = 0; // not configed yet
 
-    if (g_flag_config == 0)
+    if (vFlagConfig == 0)
       gState = STATE_CONFIG;
     else gState = STATE_CONTROL;
-    gState = STATE_CONTROL;
+    //gState = STATE_CONFIG;
 }
 /***************************************************************************************
 * LOCAL FUNCTIONS
 ***************************************************************************************/
 void stateConfig(void)
 {
-    LED_FLAG = LED_STATUS_OFF;
+    Serial.println("config");
+    gLedFlag = LED_STATUS_OFF;
     WiFi.beginSmartConfig();
     while(1)
     {
       delay(1000);
       if (WiFi.smartConfigDone())
+      {
+        Serial.println("config done");
         break;
+      }
     }
     /* write 0x05 to address 0x10 to inform that configed */
     EEPROM_Write_ConfigFlag (0x05);
@@ -109,6 +113,7 @@ void stateConfig(void)
 
 void stateControl(void)
 {
+  gLedFlag = LED_STATUS_ON;
     /* Check router connect */
     if (WiFi.status() == WL_CONNECTED)
     {
@@ -142,6 +147,8 @@ uint8_t EEPROM_Read_ConfigFlag(void){
 
 void Wifi_Connect (void)
 {
+  Serial.print("bat dau ket noi wifi");
+  gLedFlag = LED_STATUS_BLINK;
   WiFi.begin();
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -151,14 +158,14 @@ void Wifi_Connect (void)
   Serial.println("da ket noi wifi");
 }
 
-void Timer_ISR (void)
+void TimerISRHandler (void)
 {
   //Serial.println("Timer");
-//  if (LED_FLAG == LED_STATUS_BLINK)
-//  {
-//    ledToggle();
-//  }
-//  else if (LED_FLAG == LED_STATUS_ON)
-//    ledOn();
-//  else ledOff();
+  if (gLedFlag == LED_STATUS_BLINK)
+  {
+    ledToggle();
+  }
+  else if (gLedFlag == LED_STATUS_ON)
+    ledOn();
+  else ledOff();
 }

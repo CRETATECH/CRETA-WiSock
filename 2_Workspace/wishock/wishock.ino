@@ -17,18 +17,6 @@
 /*                  GLOBAL VARIABLE              */
 /*************************************************/
 
-
-//WiFiClient espClient;
-//PubSubClient client(espClient);
-
-
-
-//led_status_t LED_FLAG = LED_STATUS_BLINK;
-
-//const char* mqtt_server = "iot.eclipse.org";
-
-//char topicIn[25];
-//char topicOut[25];
 /*************************************************/
 /*                  MAIN FUCTION                 */
 /*************************************************/

@@ -11,15 +11,15 @@
 /*************************************************/
 /*                  EXTERN VARIABLE              */
 /*************************************************/
-char topicIn[25];
-char topicOut[25];
-WiFiClient espClient;
-PubSubClient client(espClient);
-const char* mqtt_server = "iot.eclipse.org";
+char gMqttTopicIn[25];
+char gMqttTopicOut[25];
+WiFiClient gESPClient;
+PubSubClient client(gESPClient);
+const char* gMqttServer = "iot.eclipse.org";
 /*************************************************/
 /*                  LOCAL  VARIABLE              */
 /*************************************************/
-char clientID[25];
+char gClientID[25];
 
 /*************************************************/
 /*                  FUCTION PROTOTYPE            */
@@ -30,43 +30,47 @@ void mqttCreateClientID (void);
 /*                  MAIN FUNCTION                */
 /*************************************************/
 void callback(char* topic, byte* payload, unsigned int length) {
-  String mqtt_recvdata = "";
+  String _mqttRecvData = "";
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (int i = 0; i < length; i++) {
-    mqtt_recvdata += String((char)payload[i]);
+    _mqttRecvData += String((char)payload[i]);
   }
-  Serial.println(mqtt_recvdata);
+  Serial.println(_mqttRecvData);
   Serial.println();
-  DataProcess(mqtt_recvdata);
+  protocolDataProcess(_mqttRecvData);
 }
 
 void mqttCreateTopic(void)
 {
-  String nameTopic = "ESP" + Get_macID();
-  String vTopic = nameTopic + "/master";
-  vTopic.toCharArray(topicIn, 24);
-  vTopic = nameTopic + "/slave";
-  vTopic.toCharArray(topicOut, 23);
+  String _nameTopic = "ESP" + Get_macID();
+  
+  String _topic = _nameTopic + "/master";
+  _topic.toCharArray(gMqttTopicIn, 24);
+  
+  _topic = _nameTopic + "/slave";
+  _topic.toCharArray(gMqttTopicOut, 23);
+  
   Serial.print("topicIn: ");
-  Serial.println(topicIn);
+  Serial.println(gMqttTopicIn);
   Serial.print("topicOut: ");
-  Serial.println(topicOut);
+  Serial.println(gMqttTopicOut);
+  
   mqttCreateClientID ();
-  client.setServer(mqtt_server, 1883);
+  client.setServer(gMqttServer, 1883);
   client.setCallback(callback);
 }
 
 void mqttSubscribe(void)
 {
-   client.subscribe(topicIn, 0);
+   client.subscribe(gMqttTopicIn, 0);
    Serial.println("subscribe"); 
 }
 
 int mqttConnect (void)
 {
-  return client.connect(clientID);
+  return client.connect(gClientID);
 }
 
 int mqttConnected (void)
@@ -74,13 +78,13 @@ int mqttConnected (void)
   return client.connected();
 }
 
-void mqttPublish (String jsonOut)
+void mqttPublish (String pJsonOut)
 {
-  char dataOut[100];
-  jsonOut.toCharArray(dataOut,jsonOut.length() + 1);
-  client.publish(topicOut, dataOut);
+  char _dataOut[100];
+  pJsonOut.toCharArray(_dataOut, pJsonOut.length() + 1);
+  client.publish(gMqttTopicOut, _dataOut);
   Serial.print("Publish json: ");
-  Serial.print(dataOut);
+  Serial.print(_dataOut);
 }
 
 void mqttLoop (void)
@@ -92,22 +96,22 @@ void mqttLoop (void)
 /*************************************************/
 String Get_macID (void)
 {
-  String val;
-  byte mac[6];
-  WiFi.macAddress(mac);
+  String _val;
+  byte _mac[6];
+  WiFi.macAddress(_mac);
   for (int i = 0; i < 6; i++)
   {
-    if (mac[i] < 0x10)
-      val += '0' + String(mac[i], HEX);
-    else val += String(mac[i], HEX);
+    if (_mac[i] < 0x10)
+      _val += '0' + String(_mac[i], HEX);
+    else _val += String(_mac[i], HEX);
   }
-  return val;
+  return _val;
 }
 
 void mqttCreateClientID (void)
 {
-  String temp = Get_macID();
-  temp = "ESP" + temp;
-  temp.toCharArray(clientID, 25);
+  String _temp = Get_macID();
+  _temp = "ESP" + _temp;
+  _temp.toCharArray(gClientID, 25);
 }
 

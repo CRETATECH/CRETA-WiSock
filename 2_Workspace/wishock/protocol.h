@@ -17,6 +17,6 @@
 * PUBLIC FUNCTION PROTOTYPES
 ***************************************************************************************/
 void protocolInit(void);
-int pars_json(String json);
-void DataProcess (String recv_json);
+//int pars_json(String json);
+void protocolDataProcess (String recv_json);
 #endif

@@ -11,15 +11,15 @@
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
-String ID = "";
-String func = "";
-String addr ="";
-String data = "";
+String gID = "";
+String gFunc = "";
+String gAddr ="";
+String gData = "";
 /***************************************************************************************
 * LOCAL FUNCTIONS PROTOTYPES
 ***************************************************************************************/
-int CtrlFunc_Process (void);
-int DataFunc_Process (void);
+int protocolCtrlFunc_Process (void);
+int protocolDataFunc_Process (void);
 /***************************************************************************************
 * PUBLIC FUNCTION
 ***************************************************************************************/
@@ -29,78 +29,84 @@ void protocolInit(void)
 
 }
 
-int pars_json(String json)
+int jsonParse(String pJson)
 {
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& root = jsonBuffer.parseObject(json);
+  DynamicJsonBuffer _jsonBuffer;
+  JsonObject& root = _jsonBuffer.parseObject(pJson);
   if (!root.success())
   {
     Serial.println("pars fail");
     return 0;
   } 
-  String a      = root["ID"];
-  ID = a;
-  String b      = root["FUNC"];
-  func = b;
-  String c      = root["ADDR"];
-  addr = c;
-  String d      = root["DATA"];
-  data = d;
+  String _a      = root["ID"];
+  gID = _a;
+  String _b      = root["FUNC"];
+  gFunc = _b;
+  String _c      = root["ADDR"];
+  gAddr = _c;
+  String _d      = root["DATA"];
+  gData = _d;
       
   Serial.println("pars ok");
   return 1; 
 }
 
-String CreateJson (String pFunc, String pAddr, String pData)
+String protocolCreateJson (String pFunc, String pAddr, String pData)
 {
   
-   String a = "{\"ID\" : \"ESP"  + Get_macID() + "\", \"FUNC\" : \"" + pFunc + "\", \"ADDR\" : \"" + pAddr + "\", \"DATA\" : \"" + pData + "\"}";
-   return a;
+   String _stringout = "{\"ID\" : \"ESP"  + Get_macID() + "\", \"FUNC\" : \"" + pFunc + "\", \"ADDR\" : \"" + pAddr + "\", \"DATA\" : \"" + pData + "\"}";
+   return _stringout;
 }
 
-void DataProcess (String recv_json)
+void protocolDataProcess (String pJsonRecv)
 {
-  int temp;
+  int _temp;
   /* parse json */
-  pars_json(recv_json);
-  /* process */
-  if (func == "Ctrl")
+  if (jsonParse(pJsonRecv) == 0)
   {
-    Serial.println("func ctrl");
-    temp = CtrlFunc_Process();
-    if (temp == PROCESS_NORMAL)
-    {
-      mqttPublish(CreateJson("Ctrl", "1", data)); 
-    }
-    else if (temp == PROCESS_ERR)
-    {
-      mqttPublish(CreateJson("Ctrl", "1", "ErrProcess"));   
-    }
-    else
-      mqttPublish(CreateJson("Ctrl", "1", "ErrFrame"));
-  }
-  else if (func == "Data")
-  {
-    Serial.println("func data");
-    temp  = DataFunc_Process();
-    if (temp == PROCESS_NORMAL)
-    {
-      mqttPublish(CreateJson("Data", "1", data)); 
-    }
-    else
-      mqttPublish(CreateJson("Ctrl", "1", "ErrFrame"));
+    mqttPublish(protocolCreateJson("Error", "1", "ErrFrame"));  
   }
   else
   {
-    mqttPublish(CreateJson("Error", "1", "ErrFrame"));    
+    /* process */
+    if (gFunc == "Ctrl")
+    {
+      Serial.println("func ctrl");
+      _temp = protocolCtrlFunc_Process();
+      if (_temp == PROCESS_NORMAL)
+      {
+        mqttPublish(protocolCreateJson("Ctrl", "1", gData)); 
+      }
+      else if (_temp == PROCESS_ERR)
+      {
+        mqttPublish(protocolCreateJson("Ctrl", "1", "ErrProcess"));   
+      }
+      else
+        mqttPublish(protocolCreateJson("Ctrl", "1", "ErrFrame"));
+    }
+    else if (gFunc == "Data")
+    {
+      Serial.println("func data");
+      _temp  = protocolDataFunc_Process();
+      if (_temp == PROCESS_NORMAL)
+      {
+        mqttPublish(protocolCreateJson("Data", "1", gData)); 
+      }
+      else
+        mqttPublish(protocolCreateJson("Ctrl", "1", "ErrFrame"));
+    }
+    else
+    {
+      mqttPublish(protocolCreateJson("Error", "1", "ErrFrame"));    
+    }
   }
 }
 
-int CtrlFunc_Process (void)
+int protocolCtrlFunc_Process (void)
 {
-  if (addr == "1")
+  if (gAddr == "1")
   {
-    if (data == "On")
+    if (gData == "On")
     {
       deviceOn();
       delay(50);
@@ -108,7 +114,7 @@ int CtrlFunc_Process (void)
         return PROCESS_NORMAL;
       else return PROCESS_ERR;
     }
-    else if (data == "Off")
+    else if (gData == "Off")
     {
       deviceOff();
       delay(50);
@@ -121,14 +127,14 @@ int CtrlFunc_Process (void)
   else return FRAME_ERR;
 }
 
-int DataFunc_Process (void)
+int protocolDataFunc_Process (void)
 {
-  if (addr == "1")
+  if (gAddr == "1")
   {
     if (deviceStatus() == DEVICE_ON)
-      data = "On";
+      gData = "On";
     else
-      data = "Off";
+      gData = "Off";
     return PROCESS_NORMAL; 
   }
   else
