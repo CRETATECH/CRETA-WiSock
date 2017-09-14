@@ -97,26 +97,40 @@ void stateSetup (void)
 ***************************************************************************************/
 void stateConfig(void)
 {
-    Serial.println("config");
+    
     gLedFlag = LED_STATUS_OFF;
-    WiFi.beginSmartConfig();
-    while(1)
-    {
-      delay(1000);
-      if (WiFi.smartConfigDone())
-      {
-        Serial.println("config done");
-        break;
-      }
+    if(digitalRead(PIN_BUTTON_CONFIG) != LOW){
+        Serial.println("config");
+        WiFi.beginSmartConfig();
+        while(1)
+        {
+          delay(1000);
+          if (true == buttonConfigCheck())
+          {
+              gLedFlag = LED_STATUS_ON;
+              while(digitalRead(PIN_BUTTON_CONFIG) == LOW){
+                  delay(1);
+              }
+              gState = STATE_CONTROL;
+              WiFi.stopSmartConfig();
+              return;
+          }
+          if (WiFi.smartConfigDone())
+          {
+            Serial.println("config done");
+    
+            break;
+          }
+        }
+        /* write 0x05 to address 0x10 to inform that configed */
+        EEPROM_Write_ConfigFlag (0x05);
+        gState = STATE_CONTROL;
     }
-    /* write 0x05 to address 0x10 to inform that configed */
-    EEPROM_Write_ConfigFlag (0x05);
-    gState = STATE_CONTROL;
 }
 
 void stateControl(void)
 {
-  gLedFlag = LED_STATUS_ON;
+    gLedFlag = LED_STATUS_ON;
     /* Check router connect */
     if (WiFi.status() == WL_CONNECTED)
     {
@@ -153,7 +167,8 @@ uint8_t EEPROM_Read_ConfigFlag(void){
 
 void Wifi_Connect (void)
 {
-  Serial.print("bat dau ket noi wifi");
+  WiFi.printDiag(Serial);
+  Serial.print("\r\nbat dau ket noi wifi");
   gLedFlag = LED_STATUS_BLINK;
   //WiFi.begin("CRETA", "yoursolution");
   WiFi.begin();
@@ -161,6 +176,13 @@ void Wifi_Connect (void)
   {
     delay(100);
     Serial.print('.');
+    if (true == buttonConfigCheck())
+    {
+      gState = STATE_CONFIG;
+      return;
+    }
+    
+      //gState = STATE_CONFIG;
   }
   Serial.println("da ket noi wifi");
 }
