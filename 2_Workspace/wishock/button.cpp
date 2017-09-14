@@ -3,6 +3,7 @@
 ***************************************************************************************/
 #include <ESP8266WiFi.h>
 #include "button.h"
+#include "device.h"
 
 /***************************************************************************************
 * LOCAL VARIABLES
@@ -25,7 +26,7 @@ extern fsm_t gState;
 void buttonInit(void){
     pinMode(PIN_BUTTON_CONFIG, INPUT_PULLUP);
     /* set Interrupt for BUTTON_CONFIG */
-    attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_CONFIG), buttonConfigISRHandler, FALLING);
+    attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_CONTROL), buttonConfigISRHandler, CHANGE);
     pinMode(PIN_BUTTON_CONTROL, INPUT);
 }
 /**
@@ -33,10 +34,11 @@ void buttonInit(void){
  * @param       None
  */
 void buttonConfigISRHandler(void){
-    if(STATE_CONFIG != gState){
-        isButtonPressed = true;
-        buttonLastPressed = millis();
+    static uint32_t _button_last_pressed = 0;
+    if((millis() - _button_last_pressed) > 300){
+        deviceToggle();
     }
+    _button_last_pressed = millis();
 }
 /**
  * @brief       Button config check
@@ -45,36 +47,23 @@ void buttonConfigISRHandler(void){
  *              false
  */
 bool buttonConfigCheck(void){
-    if(isButtonPressed = true){
-        // Check if button has been pressed for 3s
-        if(digitalRead(PIN_BUTTON_CONFIG) == LOW){
+    static uint8_t buttonLastStatus = HIGH;
+    static uint32_t buttonLastPressed = 0;
+    uint8_t buttonStatus = digitalRead(PIN_BUTTON_CONFIG);
+    if(buttonStatus != buttonLastStatus){
+        if(buttonStatus == LOW){
+            buttonLastPressed = millis();
+        }
+    }
+    else{
+        if(buttonStatus == LOW){
             if((millis() - buttonLastPressed) > 3000){
-                if(digitalRead(PIN_BUTTON_CONFIG) == LOW){
-                  isButtonPressed = false;
-                  return true;
-                }
+                return true;
             }
         }
     }
+    buttonLastStatus = buttonStatus;
     return false;
-}
-/**
- * @brief       Button config check
- * @param       None
- * @retval      true
- *              false
- */
-bool buttonDeviceCheck(void){
-    static uint8_t _last_status = HIGH;
-    static uint32_t _last_time = 0;
-    if(digitalRead(PIN_BUTTON_CONTROL) != _last_status){
-        _last_time = millis();
-    }
-    if((millis() - _last_status) > 300){
-        if(digitalRead(PIN_BUTTON_CONTROL) != _last_status){
-            _last_status = digitalRead(PIN_BUTTON_CONTROL);
-            return true;
-        }
-    }
-    return false;
+    
+    
 }

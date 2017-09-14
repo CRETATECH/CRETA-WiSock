@@ -12,6 +12,5 @@
 void buttonInit(void);
 void buttonConfigISRHandler(void);
 bool buttonConfigCheck(void);
-bool buttonDeviceCheck(void);
 
 #endif
