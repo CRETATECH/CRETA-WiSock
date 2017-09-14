@@ -10,14 +10,11 @@
 /***************************************************************************************
 * LOCAL VARIABLES
 ***************************************************************************************/
-bool isButtonPressed = false;
-uint32_t buttonLastPressed = 0;
 
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
-extern fsm_t gState;
-
+bool isButtonPressed = false;
 /***************************************************************************************
 * PUBLIC FUNCTION
 ***************************************************************************************/
@@ -37,9 +34,9 @@ void buttonInit(void){
  */
 void buttonConfigISRHandler(void){
     static uint32_t _button_last_pressed = 0;
-    if((millis() - _button_last_pressed) > 300){
+    if((millis() - _button_last_pressed) > 250){
         deviceToggle();
-        
+        isButtonPressed = true;
         
     }
     _button_last_pressed = millis();
@@ -71,3 +68,12 @@ bool buttonConfigCheck(void){
     
     
 }
+
+bool buttonControlCheck(void){
+    if(isButtonPressed == true){
+        isButtonPressed = false;
+        return true;
+    }
+    return false;
+}
+

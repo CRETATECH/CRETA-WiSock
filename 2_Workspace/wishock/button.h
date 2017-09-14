@@ -12,5 +12,6 @@
 void buttonInit(void);
 void buttonConfigISRHandler(void);
 bool buttonConfigCheck(void);
+bool buttonControlCheck(void);
 
 #endif
