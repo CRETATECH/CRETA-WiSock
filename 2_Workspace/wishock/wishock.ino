@@ -1,4 +1,4 @@
-tus/*
+/*
  * Wishock.ino
  * Date: 10/9/2017
  */

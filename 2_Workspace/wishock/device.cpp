@@ -16,8 +16,9 @@
 * PUBLIC FUNCTIONS
 ***************************************************************************************/
 void deviceInit(void){
-    pinMode(PIN_LED, OUTPUT);
+    pinMode(PIN_LED_DEVICE, OUTPUT);
     pinMode(PIN_DEVICE, OUTPUT);
+    pinMode(PIN_LED_WIFI, OUTPUT);
 }
 /**
  * Turn device ON
@@ -34,16 +35,28 @@ void deviceOff(void){
     Serial.println("device off");
 }
 /**
- * Turn led ON
+ * Turn led device ON
  */
-void ledOn(void){
-    digitalWrite(PIN_LED, LOW);
+void ledDeviceOn(void){
+    digitalWrite(PIN_LED_DEVICE, LOW);
 }
 /**
- * Turn led OFF
+ * Turn led device OFF
  */
-void ledOff(void){
-    digitalWrite(PIN_LED, HIGH);
+void ledDeviceOff(void){
+    digitalWrite(PIN_LED_DEVICE, HIGH);
+}
+/**
+ * Turn led wifi ON
+ */
+void ledWifiOn(void){
+    digitalWrite(PIN_LED_DEVICE, LOW);
+}
+/**
+ * Turn led wifi OFF
+ */
+void ledWifiOff(void){
+    digitalWrite(PIN_LED_DEVICE, HIGH);
 }
 /**
  * Toggle device
@@ -57,11 +70,11 @@ void deviceToggle(void){
 /**
  * Toggle led
  */
-void ledToggle(void){
-    if(digitalRead(PIN_LED) == HIGH)
-        ledOn();
+void ledWifiToggle(void){
+    if(digitalRead(PIN_LED_WIFI) == HIGH)
+        ledWifiOn();
     else
-        ledOff();
+        ledWifiOff();
 }
 /**
  * @brief       Return device status

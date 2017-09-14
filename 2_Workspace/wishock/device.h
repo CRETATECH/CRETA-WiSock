@@ -17,9 +17,11 @@ void deviceInit(void);
 void deviceOn(void);
 void deviceOff(void);
 void deviceToggle(void);
-void ledOn(void);
-void ledOff(void);
-void ledToggle(void);
+void ledDeviceOn(void);
+void ledDeviceOff(void);
+void ledWifiOn(void);
+void ledWifiOff(void);
+void ledWifiToggle(void);
 int deviceStatus(void);
 
 #endif

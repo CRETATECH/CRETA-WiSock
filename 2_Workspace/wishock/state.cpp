@@ -68,13 +68,13 @@ void stateSetup (void)
     /* Setup serial */
     Serial.begin(115200);
     /* Setup button */
-    buttonInit();
+    //buttonInit();
     /* Setup device */
-    deviceInit();
+    //deviceInit();
     /* Setup timer */
-    os_timer_disarm(&gTimer);
-    os_timer_setfn(&gTimer, (os_timer_func_t *)TimerISRHandler, NULL);
-    os_timer_arm(&gTimer, 200, 1);
+//    os_timer_disarm(&gTimer);
+//    os_timer_setfn(&gTimer, (os_timer_func_t *)TimerISRHandler, NULL);
+//    os_timer_arm(&gTimer, 200, 1);
     /* Anything else here */
 
 
@@ -87,7 +87,7 @@ void stateSetup (void)
     if (vFlagConfig == 0)
       gState = STATE_CONFIG;
     else gState = STATE_CONTROL;
-    //gState = STATE_CONFIG;
+    gState = STATE_CONFIG;
 }
 /***************************************************************************************
 * LOCAL FUNCTIONS
@@ -163,9 +163,9 @@ void TimerISRHandler (void)
   //Serial.println("Timer");
   if (gLedFlag == LED_STATUS_BLINK)
   {
-    ledToggle();
+    ledWifiToggle();
   }
   else if (gLedFlag == LED_STATUS_ON)
-    ledOn();
-  else ledOff();
+    ledWifiOn();
+  else ledWifiOff();
 }

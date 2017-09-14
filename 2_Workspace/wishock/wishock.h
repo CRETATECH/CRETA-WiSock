@@ -4,10 +4,11 @@
 /*************************************************/
 /*                  DEFINE SYMBOL                */
 /*************************************************/
-#define PIN_BUTTON_CONFIG             13
-#define PIN_BUTTON_CONTROL            5
-#define PIN_LED                       4
-#define PIN_DEVICE                    3
+#define PIN_BUTTON_CONFIG             0
+#define PIN_BUTTON_CONTROL            12
+#define PIN_LED_WIFI                  4
+#define PIN_DEVICE                    13
+#define PIN_LED_DEVICE                5
 //#define EEPROM_ADDRESS                0x10
 #define DEBUG            
 

@@ -111,7 +111,11 @@ int protocolCtrlFunc_Process (void)
       deviceOn();
       delay(50);
       if (deviceStatus() == DEVICE_ON)
+      //if (1 == 1)
+      {
+        //ledDeviceOn();
         return PROCESS_NORMAL;
+      }
       else return PROCESS_ERR;
     }
     else if (gData == "Off")
@@ -119,7 +123,11 @@ int protocolCtrlFunc_Process (void)
       deviceOff();
       delay(50);
       if (deviceStatus() == DEVICE_OFF)
+      //if (1 == 1)
+      {
+        //ledDeviceOff();
         return PROCESS_NORMAL;
+      }
       else return PROCESS_ERR;
     }
     else return FRAME_ERR;
@@ -132,6 +140,7 @@ int protocolDataFunc_Process (void)
   if (gAddr == "1")
   {
     if (deviceStatus() == DEVICE_ON)
+    //if (1 == 1)
       gData = "On";
     else
       gData = "Off";
