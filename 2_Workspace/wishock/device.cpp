@@ -18,7 +18,7 @@
 void deviceInit(void){
     pinMode(PIN_LED_DEVICE, OUTPUT);
     pinMode(PIN_DEVICE, OUTPUT);
-    //pinMode(PIN_LED_WIFI, OUTPUT);
+    pinMode(PIN_LED_WIFI, OUTPUT);
 }
 /**
  * Turn device ON
@@ -50,13 +50,13 @@ void ledDeviceOff(void){
  * Turn led wifi ON
  */
 void ledWifiOn(void){
-    digitalWrite(PIN_LED_DEVICE, LOW);
+    digitalWrite(PIN_LED_WIFI, LOW);
 }
 /**
  * Turn led wifi OFF
  */
 void ledWifiOff(void){
-    digitalWrite(PIN_LED_DEVICE, HIGH);
+    digitalWrite(PIN_LED_WIFI, HIGH);
 }
 /**
  * Toggle device

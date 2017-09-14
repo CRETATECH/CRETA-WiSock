@@ -74,9 +74,9 @@ void stateSetup (void)
     /* Setup device */
     deviceInit();
     /* Setup timer */
-//    os_timer_disarm(&gTimer);
-//    os_timer_setfn(&gTimer, (os_timer_func_t *)TimerISRHandler, NULL);
-//    os_timer_arm(&gTimer, 200, 1);
+    os_timer_disarm(&gTimer);
+    os_timer_setfn(&gTimer, (os_timer_func_t *)TimerISRHandler, NULL);
+    os_timer_arm(&gTimer, 400, 1);
     /* Anything else here */
 
 
@@ -168,11 +168,11 @@ void Wifi_Connect (void)
 void TimerISRHandler (void)
 {
   //Serial.println("Timer");
-//  if (gLedFlag == LED_STATUS_BLINK)
-//  {
-//    ledWifiToggle();
-//  }
-//  else if (gLedFlag == LED_STATUS_ON)
-//    ledWifiOn();
-//  else ledWifiOff();
+  if (gLedFlag == LED_STATUS_BLINK)
+  {
+    ledWifiToggle();
+  }
+  else if (gLedFlag == LED_STATUS_ON)
+    ledWifiOn();
+  else ledWifiOff();
 }
