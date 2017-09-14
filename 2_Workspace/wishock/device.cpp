@@ -18,7 +18,7 @@
 void deviceInit(void){
     pinMode(PIN_LED_DEVICE, OUTPUT);
     pinMode(PIN_DEVICE, OUTPUT);
-    pinMode(PIN_LED_WIFI, OUTPUT);
+    //pinMode(PIN_LED_WIFI, OUTPUT);
 }
 /**
  * Turn device ON

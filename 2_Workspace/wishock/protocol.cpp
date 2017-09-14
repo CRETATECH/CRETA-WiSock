@@ -113,7 +113,7 @@ int protocolCtrlFunc_Process (void)
       if (deviceStatus() == DEVICE_ON)
       //if (1 == 1)
       {
-        //ledDeviceOn();
+        ledDeviceOn();
         return PROCESS_NORMAL;
       }
       else return PROCESS_ERR;
@@ -125,7 +125,7 @@ int protocolCtrlFunc_Process (void)
       if (deviceStatus() == DEVICE_OFF)
       //if (1 == 1)
       {
-        //ledDeviceOff();
+        ledDeviceOff();
         return PROCESS_NORMAL;
       }
       else return PROCESS_ERR;

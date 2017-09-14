@@ -59,6 +59,8 @@ void stateMachine(void){
 
 void stateUpdate(void){
     /* gState update (if, elseif,...) */
+    if (true == buttonConfigCheck())
+      gState = STATE_CONFIG;
 }
 
 
@@ -68,9 +70,9 @@ void stateSetup (void)
     /* Setup serial */
     Serial.begin(115200);
     /* Setup button */
-    //buttonInit();
+    buttonInit();
     /* Setup device */
-    //deviceInit();
+    deviceInit();
     /* Setup timer */
 //    os_timer_disarm(&gTimer);
 //    os_timer_setfn(&gTimer, (os_timer_func_t *)TimerISRHandler, NULL);
@@ -87,7 +89,8 @@ void stateSetup (void)
     if (vFlagConfig == 0)
       gState = STATE_CONFIG;
     else gState = STATE_CONTROL;
-    gState = STATE_CONFIG;
+    //gState = STATE_CONFIG;
+    gState = STATE_CONTROL;
 }
 /***************************************************************************************
 * LOCAL FUNCTIONS
@@ -149,6 +152,7 @@ void Wifi_Connect (void)
 {
   Serial.print("bat dau ket noi wifi");
   gLedFlag = LED_STATUS_BLINK;
+  //WiFi.begin("CRETA", "yoursolution");
   WiFi.begin();
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -161,11 +165,11 @@ void Wifi_Connect (void)
 void TimerISRHandler (void)
 {
   //Serial.println("Timer");
-  if (gLedFlag == LED_STATUS_BLINK)
-  {
-    ledWifiToggle();
-  }
-  else if (gLedFlag == LED_STATUS_ON)
-    ledWifiOn();
-  else ledWifiOff();
+//  if (gLedFlag == LED_STATUS_BLINK)
+//  {
+//    ledWifiToggle();
+//  }
+//  else if (gLedFlag == LED_STATUS_ON)
+//    ledWifiOn();
+//  else ledWifiOff();
 }
