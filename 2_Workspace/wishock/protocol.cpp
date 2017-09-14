@@ -57,6 +57,32 @@ String protocolCreateJson (String pFunc, String pAddr, String pData)
    String _stringout = "{\"ID\" : \"ESP"  + Get_macID() + "\", \"FUNC\" : \"" + pFunc + "\", \"ADDR\" : \"" + pAddr + "\", \"DATA\" : \"" + pData + "\"}";
    return _stringout;
 }
+void protocolButtonProcess (void)
+{
+  uint32_t _time_out;
+  _time_out = millis();
+  if (deviceStatus() == DEVICE_ON)
+  {
+    //if (mqttConnected())
+    
+    while (!mqttConnected())
+    {
+      if ((millis() - _time_out) > 300)
+        break;
+    }
+      mqttPublish(protocolCreateJson("Data", "1", "On")); 
+  }
+  else
+  {
+    //if (mqttConnected())
+    while (!mqttConnected())
+    {
+      if ((millis() - _time_out) > 300)
+        break;
+    }
+      mqttPublish(protocolCreateJson("Data", "1", "Off")); 
+  }
+}
 
 void protocolDataProcess (String pJsonRecv)
 {

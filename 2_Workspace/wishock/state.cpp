@@ -116,6 +116,7 @@ void stateConfig(void)
 
 void stateControl(void)
 {
+  static int _last_device_status = HIGH;
   gLedFlag = LED_STATUS_ON;
     /* Check router connect */
     if (WiFi.status() == WL_CONNECTED)
@@ -123,18 +124,22 @@ void stateControl(void)
       /* Check connect server */
       if (!mqttConnected())
       {
+        Serial.println("mat ket noi server");
         if (mqttConnect())
         {
           mqttSubscribe();
           Serial.println("subscribe topic");
         }
       }
-      if (mqttConnect())
+      else
       {
+        if (deviceStatus() != _last_device_status)
+          protocolButtonProcess();
         mqttLoop();
       }
     }
     else Wifi_Connect();
+    _last_device_status = deviceStatus();
 }
 
 void EEPROM_Write_ConfigFlag(uint8_t pData){

@@ -19,4 +19,5 @@
 void protocolInit(void);
 //int pars_json(String json);
 void protocolDataProcess (String recv_json);
+void protocolButtonProcess (void);
 #endif

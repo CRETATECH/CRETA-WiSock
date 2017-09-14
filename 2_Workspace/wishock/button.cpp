@@ -4,6 +4,8 @@
 #include <ESP8266WiFi.h>
 #include "button.h"
 #include "device.h"
+#include "mqtt.h"
+#include "protocol.h"
 
 /***************************************************************************************
 * LOCAL VARIABLES
@@ -37,6 +39,8 @@ void buttonConfigISRHandler(void){
     static uint32_t _button_last_pressed = 0;
     if((millis() - _button_last_pressed) > 300){
         deviceToggle();
+        
+        
     }
     _button_last_pressed = millis();
 }
