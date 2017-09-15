@@ -66,6 +66,9 @@ void stateUpdate(void){
 
 void stateSetup (void)
 {
+    #ifdef DEBUG
+      Serial.println("");
+    #endif
     int vFlagConfig = 0;
     /* Setup serial */
     Serial.begin(115200);
@@ -96,11 +99,12 @@ void stateSetup (void)
 * LOCAL FUNCTIONS
 ***************************************************************************************/
 void stateConfig(void)
-{
-    
+{  
     gLedFlag = LED_STATUS_OFF;
     if(digitalRead(PIN_BUTTON_CONFIG) != LOW){
+    #ifdef DEBUG
         Serial.println("config");
+    #endif
         WiFi.beginSmartConfig();
         while(1)
         {
@@ -117,8 +121,9 @@ void stateConfig(void)
           }
           if (WiFi.smartConfigDone())
           {
+          #ifdef DEBUG
             Serial.println("config done");
-    
+          #endif
             break;
           }
         }
@@ -137,11 +142,15 @@ void stateControl(void)
       /* Check connect server */
       if (!mqttConnected())
       {
-        Serial.println("mat ket noi server");
+        #ifdef DEBUG
+          Serial.println("mat ket noi server");
+        #endif
         if (mqttConnect())
         {
           mqttSubscribe();
-          Serial.println("subscribe topic");
+          #ifdef DEBUG
+            Serial.println("subscribe topic");
+          #endif
         }
       }
       else
@@ -167,29 +176,32 @@ uint8_t EEPROM_Read_ConfigFlag(void){
 
 void Wifi_Connect (void)
 {
+  #ifdef DEBUG
   WiFi.printDiag(Serial);
   Serial.print("\r\nbat dau ket noi wifi");
+  #endif
   gLedFlag = LED_STATUS_BLINK;
   //WiFi.begin("CRETA", "yoursolution");
   WiFi.begin();
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(100);
-    Serial.print('.');
+    #ifdef DEEBUG
+      Serial.print('.');
+    #endif
     if (true == buttonConfigCheck())
     {
       gState = STATE_CONFIG;
       return;
     }
-    
-      //gState = STATE_CONFIG;
   }
-  Serial.println("da ket noi wifi");
+  #ifdef DEBUG
+    Serial.println("da ket noi wifi");
+  #endif
 }
 
 void TimerISRHandler (void)
 {
-  //Serial.println("Timer");
   if (gLedFlag == LED_STATUS_BLINK)
   {
     ledWifiToggle();

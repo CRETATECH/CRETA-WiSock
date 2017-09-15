@@ -25,14 +25,18 @@ void deviceInit(void){
  */
 void deviceOn(void){
     digitalWrite(PIN_DEVICE, LOW);
-    Serial.println("device on");
+    #ifdef DEBUG
+      Serial.println("device on");
+    #endif
 }
 /**
  * Turn device OFF
  */
 void deviceOff(void){
     digitalWrite(PIN_DEVICE, HIGH);
-    Serial.println("device off");
+    #ifdef DEBUG
+      Serial.println("device off");
+    #endif
 }
 /**
  * Turn led device ON

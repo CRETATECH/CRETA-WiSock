@@ -31,14 +31,18 @@ void mqttCreateClientID (void);
 /*************************************************/
 void callback(char* topic, byte* payload, unsigned int length) {
   String _mqttRecvData = "";
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
+  #ifdef DEBUG
+    Serial.print("Message arrived [");
+    Serial.print(topic);
+    Serial.print("] ");
+  #endif
   for (int i = 0; i < length; i++) {
     _mqttRecvData += String((char)payload[i]);
   }
-  Serial.println(_mqttRecvData);
-  Serial.println();
+  #ifdef DEBUG
+    Serial.println(_mqttRecvData);
+    Serial.println();
+  #endif
   protocolDataProcess(_mqttRecvData);
 }
 
@@ -51,12 +55,12 @@ void mqttCreateTopic(void)
   
   _topic = _nameTopic + "/slave";
   _topic.toCharArray(gMqttTopicOut, 23);
-  
-  Serial.print("topicIn: ");
-  Serial.println(gMqttTopicIn);
-  Serial.print("topicOut: ");
-  Serial.println(gMqttTopicOut);
-  
+  #ifdef DEBUG
+    Serial.print("topicIn: ");
+    Serial.println(gMqttTopicIn);
+    Serial.print("topicOut: ");
+    Serial.println(gMqttTopicOut);
+  #endif
   mqttCreateClientID ();
   client.setServer(gMqttServer, 1883);
   client.setCallback(callback);
@@ -64,8 +68,7 @@ void mqttCreateTopic(void)
 
 void mqttSubscribe(void)
 {
-   client.subscribe(gMqttTopicIn, 0);
-   Serial.println("subscribe"); 
+   client.subscribe(gMqttTopicIn, 0); 
 }
 
 int mqttConnect (void)
@@ -83,8 +86,10 @@ void mqttPublish (String pJsonOut)
   char _dataOut[100];
   pJsonOut.toCharArray(_dataOut, pJsonOut.length() + 1);
   client.publish(gMqttTopicOut, _dataOut);
-  Serial.print("Publish json: ");
-  Serial.print(_dataOut);
+  #ifdef DEBUG
+    Serial.print("Publish json: ");
+    Serial.print(_dataOut);
+  #endif
 }
 
 void mqttLoop (void)
