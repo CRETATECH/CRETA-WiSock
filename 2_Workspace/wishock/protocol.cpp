@@ -35,7 +35,9 @@ int jsonParse(String pJson)
   JsonObject& root = _jsonBuffer.parseObject(pJson);
   if (!root.success())
   {
-    Serial.println("pars fail");
+    #ifdef DEBUG
+      Serial.println("pars fail");
+    #endif
     return 0;
   } 
   String _a      = root["ID"];
@@ -46,8 +48,9 @@ int jsonParse(String pJson)
   gAddr = _c;
   String _d      = root["DATA"];
   gData = _d;
-      
-  Serial.println("pars ok");
+  #ifdef DEBUG
+    Serial.println("pars ok");
+  #endif
   return 1; 
 }
 
@@ -97,7 +100,9 @@ void protocolDataProcess (String pJsonRecv)
     /* process */
     if (gFunc == "Ctrl")
     {
-      Serial.println("func ctrl");
+      #ifdef DEBUG
+        Serial.println("func ctrl");
+      #endif
       _temp = protocolCtrlFunc_Process();
       if (_temp == PROCESS_NORMAL)
       {
@@ -112,7 +117,9 @@ void protocolDataProcess (String pJsonRecv)
     }
     else if (gFunc == "Data")
     {
-      Serial.println("func data");
+      #ifdef DEBUG
+        Serial.println("func data");
+      #endif
       _temp  = protocolDataFunc_Process();
       if (_temp == PROCESS_NORMAL)
       {
