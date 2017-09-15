@@ -29,6 +29,12 @@ void mqttCreateClientID (void);
 /*************************************************/
 /*                  MAIN FUNCTION                */
 /*************************************************/
+/**
+ * @brief       process data received from server
+ * @param       topic, payload (data) and length
+ * @retval      None
+ *              
+ */
 void callback(char* topic, byte* payload, unsigned int length) {
   String _mqttRecvData = "";
   #ifdef DEBUG
@@ -45,7 +51,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
   #endif
   protocolDataProcess(_mqttRecvData);
 }
-
+/**
+ * @brief       create topic for mqtt to sub and pub, create client ID
+ * @param       none
+ * @retval      none
+ *              
+ */
 void mqttCreateTopic(void)
 {
   String _nameTopic = "ESP" + Get_macID();
@@ -65,22 +76,44 @@ void mqttCreateTopic(void)
   client.setServer(gMqttServer, 1883);
   client.setCallback(callback);
 }
-
+/**
+ * @brief       Subscribe a topic with qos 0
+ * @param       None
+ * @retval      None
+ *              
+ */
 void mqttSubscribe(void)
 {
    client.subscribe(gMqttTopicIn, 0); 
 }
 
+/**
+ * @brief       connect to mqtt server with ID : gClientID
+ * @param       None
+ * @retval      0: connect failed
+ *              1: connect success
+ */
 int mqttConnect (void)
 {
   return client.connect(gClientID);
 }
-
+/**
+ * @brief       check connect to mqtt server
+ * @param       None
+ * @retval      1: connected
+ *              0: not connected
+ */
 int mqttConnected (void)
 {
   return client.connected();
 }
 
+/**
+ * @brief       Publish a topic with qos 0
+ * @param       pJsonOut: String json you want to publish
+ * @retval      None
+ *              
+ */
 void mqttPublish (String pJsonOut)
 {
   char _dataOut[100];
@@ -92,6 +125,12 @@ void mqttPublish (String pJsonOut)
   #endif
 }
 
+/**
+ * @brief       maintain connect to server and process in coming message by call callback function
+ * @param       None
+ * @retval      None
+ *              
+ */
 void mqttLoop (void)
 {
   client.loop();
@@ -99,6 +138,12 @@ void mqttLoop (void)
 /*************************************************/
 /*                  LOCAL FUCTION                */
 /*************************************************/
+/**
+ * @brief       get macID of ESP8266
+ * @param       None
+ * @retval      macid by string
+ *              
+ */
 String Get_macID (void)
 {
   String _val;
@@ -113,6 +158,12 @@ String Get_macID (void)
   return _val;
 }
 
+/**
+ * @brief       create clientID to connect server
+ * @param       None
+ * @retval      None
+ *              
+ */
 void mqttCreateClientID (void)
 {
   String _temp = Get_macID();
