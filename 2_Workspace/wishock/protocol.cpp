@@ -23,12 +23,24 @@ int protocolDataFunc_Process (void);
 /***************************************************************************************
 * PUBLIC FUNCTION
 ***************************************************************************************/
+/**
+ * @brief       Initialize protocol
+ * @param       none
+ * @retval      None
+ *              
+ */
 void protocolInit(void)
 {
 
 
 }
 
+/**
+ * @brief       parse Json
+ * @param       pJson
+ * @retval      0: parse failed
+ *              1: parse success
+ */
 int jsonParse(String pJson)
 {
   DynamicJsonBuffer _jsonBuffer;
@@ -54,19 +66,31 @@ int jsonParse(String pJson)
   return 1; 
 }
 
+/**
+ * @brief       create Json to prepare for publishing
+ * @param       pFunc, pAddr, pData
+ * @retval      String json
+ *              
+ */
 String protocolCreateJson (String pFunc, String pAddr, String pData)
 {
   
    String _stringout = "{\"ID\" : \"ESP"  + Get_macID() + "\", \"FUNC\" : \"" + pFunc + "\", \"ADDR\" : \"" + pAddr + "\", \"DATA\" : \"" + pData + "\"}";
    return _stringout;
 }
+
+/**
+ * @brief       process data when button is pressed
+ * @param       none
+ * @retval      None
+ *              
+ */
 void protocolButtonProcess (void)
 {
   uint32_t _time_out;
   _time_out = millis();
   if (deviceStatus() == DEVICE_ON)
   {
-    //if (mqttConnected())
     
     while (!mqttConnected())
     {
@@ -77,7 +101,6 @@ void protocolButtonProcess (void)
   }
   else
   {
-    //if (mqttConnected())
     while (!mqttConnected())
     {
       if ((millis() - _time_out) > 300)
@@ -87,6 +110,12 @@ void protocolButtonProcess (void)
   }
 }
 
+/**
+ * @brief       process data received from server
+ * @param       pJsonRecv
+ * @retval      None
+ *              
+ */
 void protocolDataProcess (String pJsonRecv)
 {
   int _temp;
@@ -135,6 +164,13 @@ void protocolDataProcess (String pJsonRecv)
   }
 }
 
+/**
+ * @brief       process Ctrl function
+ * @param       none
+ * @retval      PROCESS_NORMAL
+ *              PROCESS_ERR
+ *              FRAME_ERR
+ */
 int protocolCtrlFunc_Process (void)
 {
   if (gAddr == "1")
@@ -168,6 +204,12 @@ int protocolCtrlFunc_Process (void)
   else return FRAME_ERR;
 }
 
+/**
+ * @brief       process Data function
+ * @param       none
+ * @retval      PROCESS_NORMAL
+ *              FRAME_ERR
+ */
 int protocolDataFunc_Process (void)
 {
   if (gAddr == "1")

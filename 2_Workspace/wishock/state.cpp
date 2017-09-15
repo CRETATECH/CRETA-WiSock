@@ -44,6 +44,11 @@ led_status_t gLedFlag;
 /***************************************************************************************
 * PUBLIC FUNCTIONS
 ***************************************************************************************/
+/**
+ * @brief       main finite state machine
+ * @param       none
+ * @retval      none
+ */
 void stateMachine(void){
     switch(gState){
         case STATE_CONFIG:
@@ -57,13 +62,22 @@ void stateMachine(void){
     }
 }
 
+/**
+ * @brief       update button control status
+ * @param       none
+ * @retval      none
+ */
 void stateUpdate(void){
     /* gState update (if, elseif,...) */
     if (true == buttonConfigCheck())
       gState = STATE_CONFIG;
 }
 
-
+/**
+ * @brief       Init all gpio, timer, mqtt, protocol before go to state machine
+ * @param       none
+ * @retval      none
+ */
 void stateSetup (void)
 {
     #ifdef DEBUG
@@ -96,6 +110,11 @@ void stateSetup (void)
 /***************************************************************************************
 * LOCAL FUNCTIONS
 ***************************************************************************************/
+/**
+ * @brief       use smart config to config wifi
+ * @param       none
+ * @retval      none
+ */
 void stateConfig(void)
 {  
     WiFi.mode(WIFI_STA);
@@ -132,6 +151,11 @@ void stateConfig(void)
     }
 }
 
+/**
+ * @brief       check connect to router, server
+ * @param       none
+ * @retval      none
+ */
 void stateControl(void)
 {
     gLedFlag = LED_STATUS_ON;
@@ -162,17 +186,32 @@ void stateControl(void)
     else Wifi_Connect();
 }
 
+/**
+ * @brief       write data to EEPROM (address is 0x10)
+ * @param       pData: data want to write
+ * @retval      none
+ */
 void EEPROM_Write_ConfigFlag(uint8_t pData){
     EEPROM.begin(50);
     EEPROM.write(EEPROM_ADDRESS, pData);
     EEPROM.commit();
 }
 
+/**
+ * @brief       Read data from EEPROM
+ * @param       none
+ * @retval      data read
+ */
 uint8_t EEPROM_Read_ConfigFlag(void){
     EEPROM.begin(50);
     return EEPROM.read(EEPROM_ADDRESS);
 }
 
+/**
+ * @brief       connect to the last wifi connected
+ * @param       none
+ * @retval      none
+ */
 void Wifi_Connect (void)
 {
   gLedFlag = LED_STATUS_BLINK;
@@ -199,6 +238,11 @@ void Wifi_Connect (void)
   #endif
 }
 
+/**
+ * @brief       timer interrupt service routine
+ * @param       none
+ * @retval      none
+ */
 void TimerISRHandler (void)
 {
   if (gLedFlag == LED_STATUS_BLINK)

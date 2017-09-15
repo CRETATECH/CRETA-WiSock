@@ -15,6 +15,9 @@
 /***************************************************************************************
 * PUBLIC FUNCTIONS
 ***************************************************************************************/
+/**
+ * Initialize gpio (led, device)
+ */
 void deviceInit(void){
     pinMode(PIN_LED_DEVICE, OUTPUT);
     pinMode(PIN_DEVICE, OUTPUT);
