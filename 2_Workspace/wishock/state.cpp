@@ -92,8 +92,6 @@ void stateSetup (void)
     if (vFlagConfig == 0)
       gState = STATE_CONFIG;
     else gState = STATE_CONTROL;
-    //gState = STATE_CONFIG;
-    gState = STATE_CONTROL;
 }
 /***************************************************************************************
 * LOCAL FUNCTIONS
