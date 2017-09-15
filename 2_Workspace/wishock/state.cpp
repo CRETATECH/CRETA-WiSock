@@ -98,10 +98,11 @@ void stateSetup (void)
 ***************************************************************************************/
 void stateConfig(void)
 {  
+    WiFi.mode(WIFI_STA);
     gLedFlag = LED_STATUS_OFF;
     if(digitalRead(PIN_BUTTON_CONFIG) != LOW){
     #ifdef DEBUG
-        Serial.println("config");
+        Serial.println("\r\nStart config...");
     #endif
         WiFi.beginSmartConfig();
         while(1)
@@ -120,7 +121,7 @@ void stateConfig(void)
           if (WiFi.smartConfigDone())
           {
           #ifdef DEBUG
-            Serial.println("config done");
+            Serial.println("Config done!!!\r\n");
           #endif
             break;
           }
@@ -141,13 +142,13 @@ void stateControl(void)
       if (!mqttConnected())
       {
         #ifdef DEBUG
-          Serial.println("mat ket noi server");
+          Serial.println("MQTT Server not connect...");
         #endif
         if (mqttConnect())
         {
           mqttSubscribe();
           #ifdef DEBUG
-            Serial.println("subscribe topic");
+            Serial.println("MQTT Server connected, subscribe to topic");
           #endif
         }
       }
@@ -174,17 +175,17 @@ uint8_t EEPROM_Read_ConfigFlag(void){
 
 void Wifi_Connect (void)
 {
-  #ifdef DEBUG
-  WiFi.printDiag(Serial);
-  Serial.print("\r\nbat dau ket noi wifi");
-  #endif
   gLedFlag = LED_STATUS_BLINK;
   //WiFi.begin("CRETA", "yoursolution");
   WiFi.begin();
+  #ifdef DEBUG
+  WiFi.printDiag(Serial);
+  Serial.print("\r\nWiFi connecting");
+  #endif
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(100);
-    #ifdef DEEBUG
+    #ifdef DEBUG
       Serial.print('.');
     #endif
     if (true == buttonConfigCheck())
@@ -194,7 +195,7 @@ void Wifi_Connect (void)
     }
   }
   #ifdef DEBUG
-    Serial.println("da ket noi wifi");
+    Serial.println("\r\nWiFi connected!!!");
   #endif
 }
 

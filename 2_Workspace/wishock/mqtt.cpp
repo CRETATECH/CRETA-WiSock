@@ -56,7 +56,7 @@ void mqttCreateTopic(void)
   _topic = _nameTopic + "/slave";
   _topic.toCharArray(gMqttTopicOut, 23);
   #ifdef DEBUG
-    Serial.print("topicIn: ");
+    Serial.print("\r\ntopicIn: ");
     Serial.println(gMqttTopicIn);
     Serial.print("topicOut: ");
     Serial.println(gMqttTopicOut);
