@@ -117,8 +117,8 @@ void stateSetup (void)
  */
 void stateConfig(void)
 {  
-    WiFi.mode(WIFI_STA);
     gLedFlag = LED_STATUS_OFF;
+    WiFi.mode(WIFI_STA);
     if(digitalRead(PIN_BUTTON_CONFIG) != LOW){
     #ifdef DEBUG
         Serial.println("\r\nStart config...");
@@ -245,11 +245,26 @@ void Wifi_Connect (void)
  */
 void TimerISRHandler (void)
 {
+  static uint32_t _time = 0;
   if (gLedFlag == LED_STATUS_BLINK)
   {
     ledWifiToggle();
   }
-  else if (gLedFlag == LED_STATUS_ON)
-    ledWifiOn();
-  else ledWifiOff();
+  else if (gLedFlag == LED_STATUS_ON) {
+        ledWifiOn();
+        _time = millis();
+        if (gState == STATE_CONFIG)
+        {
+          if ((millis() - _time) > 1000)
+            gLedFlag = LED_STATUS_OFF;
+        }
+  }
+
+  else {
+    ledWifiOff();
+    _time = millis();
+    if ((millis() - _time) > 5000)
+     gLedFlag = LED_STATUS_ON;
+  }
+
 }
