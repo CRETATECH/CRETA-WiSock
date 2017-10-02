@@ -36,6 +36,7 @@ void stateControl(void);
 fsm_t gState = STATE_CONTROL;
 os_timer_t gTimer;
 led_status_t gLedFlag;
+uint32_t _time = 0;
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
@@ -118,6 +119,7 @@ void stateSetup (void)
 void stateConfig(void)
 {  
     gLedFlag = LED_STATUS_OFF;
+    _time = millis();
     WiFi.mode(WIFI_STA);
     if(digitalRead(PIN_BUTTON_CONFIG) != LOW){
     #ifdef DEBUG
@@ -245,26 +247,29 @@ void Wifi_Connect (void)
  */
 void TimerISRHandler (void)
 {
-  static uint32_t _time = 0;
   if (gLedFlag == LED_STATUS_BLINK)
   {
     ledWifiToggle();
   }
   else if (gLedFlag == LED_STATUS_ON) {
         ledWifiOn();
-        _time = millis();
         if (gState == STATE_CONFIG)
         {
           if ((millis() - _time) > 1000)
+          {
             gLedFlag = LED_STATUS_OFF;
+            _time = millis();
+          }
         }
   }
 
   else {
     ledWifiOff();
-    _time = millis();
     if ((millis() - _time) > 5000)
+    {
      gLedFlag = LED_STATUS_ON;
+     _time = millis();
+    }
   }
 
 }
