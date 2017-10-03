@@ -89,7 +89,11 @@ while 1:
 		break
 
 #write log
-
+print("---------------------------------------------------------")
+print("-------------------------RESULT--------------------------")
+print("| Msg Sent | Msg Recv | Msg Timeout | Msg Suc | Msg Err |") 
+print("|    " + str(send_num) + "     |    " + str(recv_num) + "     |    " + str(timeout_num) + "     |    " + str(done_num) + "     |    " + str(error_num) + "     |") 
+print("--------------------------END----------------------------")
 
 
 
