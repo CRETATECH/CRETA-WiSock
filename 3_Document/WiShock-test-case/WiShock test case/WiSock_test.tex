@@ -1,0 +1,185 @@
+\documentclass[a4paper]{article}
+% Packages
+\usepackage[utf8]{vietnam}
+\usepackage{hyperref}
+\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+
+% Settings
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+\setcounter{secnumdepth}{4}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+
+\title{\textbf{TÀI LIỆU KIỂM TRA ĐÁNH GIÁ\\Dự án: WiSock}}
+\author{Soạn thảo: HgN + Nghia}
+
+% Begin document
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{GIỚI THIỆU}
+\subsection{Giới thiệu}
+Tài liệu này được soạn nhằm liệt kê các công cụ và phương thức kiểm tra sản phẩm. Cụ thể tài liệu sẽ liệt kê chi tiết các trường hợp cần kiểm tra, cách thức kiểm tra và đánh giá kết quả. Đối tượng của tài liệu này là các Developer và Tester tham gia vào quá trình hoàn thiện, kiểm tra và phát triển sản phẩm.
+\subsection{Tổng quan sản phẩm}
+WiSock là sản phẩm thông minh điều khiển bật tắt một thiết bị từ xa thông qua hệ thống mạng Internet. Cụ thể thiết bị sử dụng một ESP8266 v7 kết nối bằng giao thức MQTT tới một server, thông qua đó người dùng có thể điều khiển và thu thập trạng thái thiết bị thông qua ứng dụng được cung cấp.
+\subsection{Các định nghĩa và viết tắt}
+\begin{table}[!h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Định nghĩa/Viết tắt}  & \textbf{Chi tiết}                                                                                     \\ \hline
+WiSock                        & Sử dụng để nói chung sản phẩm/bộ phận điều khiển chính của sản phẩm. \\ \hline
+Thiết bị                      & Nói đến thiết bị người dùng được WiSock điều khiển bật tắt.                                           \\ \hline
+MQTT                          & Message Queuing Telemetry Transport.                     \\ \hline
+Topic/Broker/Subcribe/Publish & Các thuật ngữ của giao thức MQTT.                                                                     \\ \hline
+MAC                           & Media Access Control address.                                                                         \\ \hline
+SSID/Password                 & Tên và mật khẩu kết nối WiFi.                                                                         \\ \hline
+Config                        & Thiết lập SSID và password cho WiSock.                                                                \\ \hline
+\end{tabular}
+\caption{Bảng định nghĩa và viết tắt}
+\end{table}
+
+\section{PHƯƠNG THỨC HOẠT ĐỘNG VÀ CÁC YẾU TỐ CẦN KIỂM TRA}
+\subsection{Tổng quan thiết kế}
+\begin{enumerate}
+	\item Sau khi khởi động, WiSock sẽ kiểm tra thông tin WiFi:
+	\begin{itemize}
+		\item Nếu đã có SSID và password được lưu, WiSock sẽ sử dụng thông tin đó để kết nối WiFi.
+		\item Nếu chưa có SSID và password, nhấn nút Config sẽ chuyển sang chế độ config, sử dụng giao thức SmartConfig để cài đặt SSID và password cho WiSock/
+	\end{itemize}
+	\item Sau khi kết nối WiFi thành công, WiSock sẽ cố gắng kết nối đến broker MQTT.
+	\item Sau khi kết nối thành công tới broker MQTT, WiSock sẽ dựa trên MAC để tạo ra các topic:
+	\begin{itemize}
+		\item Topic để Subcribe: ESP+<MAC>/master
+		\item Topic để Publish: ESP+<MAC>/slave
+	\end{itemize}
+	\item WiSock lúc này có thể nhận gói tin điều khiển từ server (gói tin theo cấu trúc JSON).
+	\item WiSock luôn có thể được điều khiển bằng một nút nhấn (dạng switch).
+	\item WiSock có thể chuyển về chế độ config để thay đổi SSID và password, cũng như chuyển từ chế độ config về chế độ điều khiển bằng một nút nhấn (dạng push button, giữ trong 3s).
+	\item WiSock có một led báo trạng thái, luôn thể hiện rõ ràng trạng thái hiện tại của WiSock (WiFi connecting, WiFi connected, WiFi configuring).
+\end{enumerate}
+\subsection{Các yếu tố cần kiểm tra và đánh giá}
+\begin{enumerate}
+	\item Kiểm tra các yếu tố phần cứng
+	\begin{itemize}
+		\item Kiểm tra led trạng thái.
+		\item Kiểm tra nút nhấn điều khiển và khả năng điều khiển thiết bị.
+		\item Kiểm tra nút nhấn config.
+	\end{itemize}
+	\item Kiểm tra kết nối
+	\begin{itemize}
+		\item Kiểm tra phương thức SmartConfig.
+		\item Kiểm tra kết nối tới WiFi.
+		\item Kiểm tra kết nối tới broker MQTT.
+	\end{itemize}
+	\item Kiểm tra phương thức giao tiếp
+	\begin{itemize}
+		\item Kiểm tra đáp ứng của hệ thống với từng lệnh điều khiển khác nhau.
+	\end{itemize}
+	\item Kiểm tra tính ổn định của hệ thống
+	\begin{itemize}
+		\item Kiểm tra khả năng xử lý của hệ thống khi mất kết nối tới WiFi hoặc broker.
+		\item Kiểm tra khả năng xử lý của hệ thống khi gặp xự cố mất điện.
+		\item Kiểm tra tính ổn đinh/đáng tin cậy của hệ thống khi hoạt động trong thời gian dài.
+	\end{itemize}
+\end{enumerate}
+
+\section{Chi tiết phương thức kiểm tra đánh giá}
+\subsection{Công cụ kiểm tra}
+\begin{itemize}
+	\item Kiểm tra bằng tay:
+	\begin{itemize}
+		\item App SmartConfig (thiết lập SSID và password).
+		\item MQTT Lens (giao tiếp với WiSock).
+	\end{itemize}
+	\item Kiểm tra tự động:
+	\begin{itemize}
+		\item Script python/bash và các file log.
+	\end{itemize}
+\end{itemize}
+Ngoài ra source code của WiSock có hỗ trợ debug qua cổng Serial nên có thể thể dùng thêm 1 USB UART để hỗ trợ quá trình kiểm tra sửa lỗi.
+\subsection{Chi tiết kiểm tra}
+Các phương thức kiểm tra dưới đây nên được thực hiện theo đúng trình tự từ trên xuống dưới. Một số phướng thức kiểm tra được nêu sau có thể mặc định các bài kiểm tra trước đó đã qua (pass) và dựa vào đó để đưa ra kết luận đánh giá.
+\subsubsection{Kiểm tra yếu tố phần cứng}
+\paragraph*{Kiểm tra}
+\begin{itemize}
+	\item Đảm bảo WiSock được cấp nguồn đúng chuẩn và ổn định.
+	\item Đánh giá bằng mắt hành vi của led trạng thái, đảm bảo hành vi tương tự như trong thiết kế. Từ đó có thể một phần dựa vào led trạng thái để đánh giá các hành vi khác.
+	\item Bật tắt nút điều khiển và xem trạng thái của thiết bị được điều khiển.
+	\item Nhấn giữ nút config trong khoảng 3 giây để đổi trạng thái hoạt động của WiSock.
+\end{itemize}
+\paragraph*{Kết quả mong muốn}
+\begin{itemize}
+	\item Hệ thống khởi động nhanh, ổn định.
+	\item Thiết bị đổi trạng thái bật tắt theo trạng thái nút nhấn, độ trễ thấp.
+	\item WiSock chuyển đổi giữa trạng thái config và trạng thái điều khiển dễ dàng (dựa vào led trạng thái để kiểm tra).
+\end{itemize}
+\subsubsection{Kiểm tra kết nối}
+\paragraph*{Kiểm tra 1:}
+Chuyển WiSock về chế độ config, sử dụng SmartConfig để cung cấp chính xác SSID và password.
+\paragraph*{Kết quả mong muốn 1:}
+Led trạng thái phải báo WiSock chuyển sang đang kết nối WiFi và sau đó là kết nối thành công. Ứng dụng smart config phải nhận được MAC của WiSock.
+\paragraph*{Kiểm tra 2:}
+Kiểm tra topic "topicTest" trên MQTT ngay sau khi WiSock đã kết nối được WiFi.
+\paragraph*{Kết quả mong muốn 2:}
+Nếu kết nối được tới broker MQTT, WiSock sẽ gửi gói tin dạng ESP+<MAC> như một dạng thông báo tên topic.
+\subsubsection{Kiểm tra phương thức giao tiếp}
+\paragraph*{Kiểm tra 1:} Lệnh điều khiển\\
+Gửi một trong hai frame sau tới topic mà WiSock subcribe (topic master):\\
+\{ID:"ESP+<MAC>", FUNC:"Ctrl", ADDR:"1", DATA:"ON"\}\\
+\{ID:"ESP+<MAC>", FUNC:"Ctrl", ADDR:"1", DATA:"OFF"\}
+\paragraph*{Kết quả mong muốn 1:}
+\begin{itemize}
+	\item Thiết bị phải được bật hoặc tắt tương ứng với lệnh gửi đi.
+	\item Nhận được trên topic mà WiSock publish (topic slave) frame sau, ứng với trạng thái sau khi điều khiển:\\
+	\{ID:"ESP+<MAC>", FUNC:"Ctrl", ADDR:"1", DATA:"ON"\}\\
+	\{ID:"ESP+<MAC>", FUNC:"Ctrl", ADDR:"1", DATA:"OFF"\}
+\end{itemize}
+\paragraph*{Kiểm tra 2:} Lệnh dữ liệu\\
+Gửi frame sau tới topic mà WiSock subcribe (topic master):\\
+\{ID:"ESP+<MAC>", FUNC:"Data", ADDR:"1", DATA:""\}
+\paragraph*{Kết quả mong muốn 2:}
+Nhận được trên topic mà WiSock publish (topic slave) frame sau, ứng với trạng thái hiện tại của thiết bị:\\
+\{ID:"ESP+<MAC>", FUNC:"Data", ADDR:"1", DATA:"ON"\}\\
+\{ID:"ESP+<MAC>", FUNC:"Data", ADDR:"1", DATA:"OFF"\}\\
+\paragraph*{Kiểm tra 3:} Điều khiển nút nhấn\\
+Nhấn nút điều khiển để đổi trạng thái thiết bị.
+\paragraph*{Kết quả mong muốn 2:}
+Nhận được trên topic mà WiSock publish (topic slave) frame sau, ứng với trạng thái hiện tại của thiết bị:\\
+\{ID:"ESP+<MAC>", FUNC:"Data", ADDR:"1", DATA:"ON"\}\\
+\{ID:"ESP+<MAC>", FUNC:"Data", ADDR:"1", DATA:"OFF"\}\\
+\paragraph*{Kiểm tra 4:} Lỗi giao tiếp\\
+Gửi một frame sai cấu trúc JSON hoặc một frame sai các trường/dữ liệu.
+\paragraph*{Kết quả mong muốn 4:}
+Nhận được trên topic mà WiSock publish (topic slave) frame sau, ứng với trạng thái hiện tại của thiết bị:\\
+\{ID:"ESP+<MAC>", FUNC:"Error", ADDR:"1", DATA:"ErrFrame"\}\\
+\subsubsection{Kiểm tra tính ổn định của hệ thống}
+\paragraph*{Kiểm tra 1:} Ngắt nguồn của WiSock, sau đó cấp nguồn trở lại.
+\paragraph*{Kết quả mong muốn 1:} WiSock nhanh chóng khởi động, sử dụng SSID và password đã lưu để kết nối lại mà không cần phải config lại.\\
+\paragraph*{Kiểm tra 2:} Ngắt kết nối WiFi, sau đó bật trở lại.
+\paragraph*{Kết quả mong muốn 2:} WiSock báo trạng thái mất kết nối/thử kết nối lại thông qua led trạng thái. WiSock cũng phải nhanh chóng kết nối lại ngay sau khi WiFi được hồi phục (kiểm tra giống như 3.2.2).\\
+\paragraph*{Kiểm tra 3:} Cho WiSock chạy trong thời gian dài. Trong thời gian đó liên tục gửi các gói lệnh tới WiSock để kiểm tra khả năng đáp ứng.
+\paragraph*{Kết quả mong muốn 3:} WiSock hoạt động ổn định, không gặp tình trạng tự reset, ngắt kết nối, treo cứng ngưng hoạt động. Số gói tin gửi nhận thành công trên $90\%$.
+
+\section{PHỤ LỤC}
+\subsection{Tài liệu tham khảo}
+\begin{table}[!h]
+\centering
+\label{my-label}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Tài liệu} & \textbf{Nguồn}                         \\ \hline
+Requirement       & 1\_Requirement/WiSock\_Requirement.pdf \\ \hline
+HW Schematic      & 1\_Requirement/WiSock\_Schematic.pdf   \\ \hline
+Design document   & 3\_Documentation/WiSock\_Design.pdf    \\ \hline
+\end{tabular}
+\caption{Các tài liệu tham khảo}
+\end{table}
+\subsection{Bảng trạng thái led}
+Chèn hộ cái bảng vào đây
+\end{document}
