@@ -75,9 +75,7 @@ void mqttCreateTopic(void)
   mqttCreateClientID ();
   client.setServer(gMqttServer, 1883);
   client.setCallback(callback);
-  char _dataOut[100];
-  _nameTopic.toCharArray(_dataOut, _nameTopic.length() + 1);
-  client.publish("topicTest", _dataOut);
+
 }
 /**
  * @brief       Subscribe a topic with qos 0
@@ -126,6 +124,11 @@ void mqttPublish (String pJsonOut)
     Serial.print("Publish json: ");
     Serial.print(_dataOut);
   #endif
+}
+
+void mqttPubTest (void)
+{
+  client.publish("topicTest", gClientID);
 }
 
 /**

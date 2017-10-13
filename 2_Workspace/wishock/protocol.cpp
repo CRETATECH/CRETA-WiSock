@@ -91,22 +91,25 @@ void protocolButtonProcess (void)
   _time_out = millis();
   if (deviceStatus() == DEVICE_ON)
   {
-    
-    while (!mqttConnected())
-    {
-      if ((millis() - _time_out) > 300)
-        break;
-    }
-      mqttPublish(protocolCreateJson("Data", "1", "On")); 
-  }
-  else
-  {
+    deviceOff();
+    ledDeviceOff();
     while (!mqttConnected())
     {
       if ((millis() - _time_out) > 300)
         break;
     }
       mqttPublish(protocolCreateJson("Data", "1", "Off")); 
+  }
+  else
+  {
+    deviceOn();
+    ledDeviceOn();
+    while (!mqttConnected())
+    {
+      if ((millis() - _time_out) > 300)
+        break;
+    }
+      mqttPublish(protocolCreateJson("Data", "1", "On")); 
   }
 }
 

@@ -15,7 +15,8 @@ global done_num
 done_num    = 0
 global error_num
 error_num   = 0
-
+global sub_num
+sub_num = 0
 
 def funcTest(func):
 	global send_num
@@ -26,7 +27,7 @@ def funcTest(func):
 	timeout  = 0
 	while sended == 1:
 		timeout = timeout + 1
-		if timeout > 100000000:
+		if timeout > 40000000:
 			timeout_num = timeout_num + 1
 			timeout = 0
 			sended  = 0
@@ -37,7 +38,7 @@ def funcTest(func):
 	sended   = 1
 	while sended == 1:
 		timeout = timeout + 1
-		if timeout > 100000000:
+		if timeout > 40000000:
 			timeout_num = timeout_num + 1
 			timeout = 0
 			sended  = 0
@@ -49,6 +50,7 @@ def mqttPublish(func, data):
 	# khai bao bien toan cuc
 	global ID
 	global topicOut
+	print(topicOut)
 	if func == 2:
 		func_str = 'Ctrl'
 	else:
@@ -75,14 +77,19 @@ def on_message(client, userdata, msg):
 		global ID
 		global initialized
 		global topicOut
+		global sub_num
 		print("SUCCESS: Recv topic from topicTest")
 		print("-------- macID: " + str(msg.payload) + "------------")
 		print("Start to subscribe to topic: " + str(msg.payload) + "/slave")
-		client.unsubscribe("topicTest")
+		client.unsubscribe('topicTest')
+		client.on_unsubscribe = on_unsubscribe
 		topicIn  = str(msg.payload) + "/slave"
 		client.subscribe(topicIn, qos = 0)
+		client.on_subscribe = on_subscribe
 		ID = str(msg.payload)
-		topicOut = str(msg.payload) + "master"
+		topicOut = str(msg.payload) + "/master"
+		while sub_num != 2:
+			sub_num = sub_num
 		initialized = 1
 	else:
 		global recv_num
@@ -101,7 +108,13 @@ def on_publish(client, userdata, mid):
 	print("SUCCESS: Publish msg")
 
 def on_subscribe(client, userdata, mid, granted_qos):
+	global sub_num
+	sub_num = sub_num + 1
+	print("subscribe lan " + str(sub_num))
 	print("SUCCESS: Subscribe topic")
+
+def on_unsubscribe (client, userdata, mid):
+	print("SUCCESS: Unsubscribe topic")
 
 print("-------------------CRETA----------------------")
 print("-                                            -")
@@ -116,6 +129,7 @@ client.on_connect   = on_connect
 client.on_message   = on_message
 client.on_publish   = on_publish
 client.on_subscribe = on_subscribe
+client.on_unsubscribe = on_unsubscribe
 client.connect ("iot.eclipse.org", 1883, 60)
 client.subscribe("topicTest", qos = 0)
 client.loop()

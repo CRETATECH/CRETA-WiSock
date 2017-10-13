@@ -34,8 +34,7 @@ void buttonInit(void){
  */
 void buttonConfigISRHandler(void){
     static uint32_t _button_last_pressed = 0;
-    if((millis() - _button_last_pressed) > 250){
-        deviceToggle();
+    if((millis() - _button_last_pressed) > 400){
         isButtonPressed = true;
         
     }
