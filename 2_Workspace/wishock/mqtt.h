@@ -12,4 +12,5 @@ int mqttConnected (void);
 void mqttPublish (String jsonOut);
 void mqttLoop (void);
 String Get_macID (void);
+void mqttPubTest (void);
 #endif

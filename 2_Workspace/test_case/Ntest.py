@@ -100,7 +100,7 @@ def main(argv):
         mqttMessTx['ID'] = ESP_ID
         mqttMessTx['FUNC'] = 'Ctrl'
         mqttMessTx['ADDR'] = '1'
-        mqttMessTx['DATA'] = 'ON'
+        mqttMessTx['DATA'] = 'On'
         client.publish(topic=mqttMasterTopic, payload=json.dumps(mqttMessTx))
         # Wait for respond
         while mqttMessRx['ID'] == '':

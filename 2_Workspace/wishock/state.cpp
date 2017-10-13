@@ -19,7 +19,7 @@
 /***************************************************************************************
 * LOCAL DEFINES
 ***************************************************************************************/
-#define EEPROM_ADDRESS                0x10
+
 
 /***************************************************************************************
 * LOCAL FUNCTIONS PROTOTYPES
@@ -40,7 +40,7 @@ uint32_t _time = 0;
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
-
+extern char gClientID[25];
 
 /***************************************************************************************
 * PUBLIC FUNCTIONS
@@ -181,7 +181,9 @@ void stateControl(void)
       else
       {
         if (buttonControlCheck() == true)
+        {
           protocolButtonProcess();
+        }
         mqttLoop();
       }
     }
@@ -217,7 +219,6 @@ uint8_t EEPROM_Read_ConfigFlag(void){
 void Wifi_Connect (void)
 {
   gLedFlag = LED_STATUS_BLINK;
-  //WiFi.begin("CRETA", "yoursolution");
   WiFi.begin();
   #ifdef DEBUG
   WiFi.printDiag(Serial);
@@ -235,8 +236,14 @@ void Wifi_Connect (void)
       return;
     }
   }
+  mqttConnect();
+  mqttSubscribe();
   #ifdef DEBUG
     Serial.println("\r\nWiFi connected!!!");
+  #endif
+  #ifdef DEBUG
+    mqttPubTest();
+    Serial.println("publish test");
   #endif
 }
 
@@ -271,5 +278,6 @@ void TimerISRHandler (void)
      _time = millis();
     }
   }
+
 
 }

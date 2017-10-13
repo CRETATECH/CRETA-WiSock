@@ -9,7 +9,7 @@
 #define PIN_LED_WIFI                  4
 #define PIN_DEVICE                    13
 #define PIN_LED_DEVICE                5
-//#define EEPROM_ADDRESS                0x10
+#define EEPROM_ADDRESS                0x10
 #define DEBUG            
 
 typedef enum {
