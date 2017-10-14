@@ -31,7 +31,7 @@ def mqttGetEspId(client, userdata, msg):
     global ESP_ID
     ESP_ID = msg.payload.decode('utf-8')
     print(ESP_ID)
-    
+
 def main(argv):
     """Test system performance and stability"""
     # All variable
@@ -41,7 +41,7 @@ def main(argv):
     global mode
     ESP_ID = None
     mqttMessTx = {}
-    mqttMessRx = {}   
+    mqttMessRx = {}
     mode = 'default'
     # Get argument
     try:
@@ -103,18 +103,43 @@ def main(argv):
         mqttMessTx['DATA'] = 'On'
         client.publish(topic=mqttMasterTopic, payload=json.dumps(mqttMessTx))
         # Wait for respond
+        timeout = 0
         while mqttMessRx['ID'] == '':
+            timeout = timeout + 1
             client.loop()
-        # TODO: Add timeout condition
-        # TODO: Add other function test
-        # TODO: Add log write
-        # Wait 5 second between each test
+            if timeout > 400000:
+                break
         time.sleep(5)
-    # TODO: Add out condition, add summary to log
-
-    
+        # Send cmd to turn device OFF
+        mqttMessTx['ID'] = ESP_ID
+        mqttMessTx['FUNC'] = 'Ctrl'
+        mqttMessTx['ADDR'] = '1'
+        mqttMessTx['DATA'] = 'Off'
+        client.publish(topic=mqttMasterTopic, payload=json.dumps(mqttMessTx))
+        # Wait for respond
+        timeout = 0
+        while mqttMessRx['ID'] == '':
+            timeout = timeout + 1
+            client.loop()
+            if timeout > 400000:
+                break
+        time.sleep(5)
+        # Send cmd to turn device OFF
+        mqttMessTx['ID'] = ESP_ID
+        mqttMessTx['FUNC'] = 'Data'
+        mqttMessTx['ADDR'] = '1'
+        mqttMessTx['DATA'] = ''
+        client.publish(topic=mqttMasterTopic, payload=json.dumps(mqttMessTx))
+        # Wait for respond
+        timeout = 0
+        while mqttMessRx['ID'] == '':
+            timeout = timeout + 1
+            client.loop()
+            if timeout > 400000:
+                break
+        time.sleep(5)
+        #TODO: Add log file.
+        #TODO: print out debug information
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
