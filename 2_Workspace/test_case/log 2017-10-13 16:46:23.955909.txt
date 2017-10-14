@@ -1,3 +1,0 @@
-Get ESP5ccf7f4e5466
-Create new topic ESP5ccf7f4e5466/master
-Create new topic ESP5ccf7f4e5466/slave
