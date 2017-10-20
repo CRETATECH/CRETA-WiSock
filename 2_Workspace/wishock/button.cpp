@@ -38,6 +38,7 @@ void buttonConfigISRHandler(void){
     if((millis() - _button_last_pressed) > 150){
         isButtonPressed = true; //varialbe return to network process
         deviceToggle(); // change state of device
+
     }
     _button_last_pressed = millis();
 }

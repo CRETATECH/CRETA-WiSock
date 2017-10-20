@@ -23,10 +23,7 @@ void deviceInit(void){
     pinMode(PIN_LED_DEVICE, OUTPUT);
     pinMode(PIN_DEVICE, OUTPUT);
     pinMode(PIN_LED_WIFI, OUTPUT);
-//    if (digitalRead(PIN_BUTTON_CONTROL) == LOW)
-//      deviceOff();
-//    else
-//      deviceOn();
+
     deviceOff();
 }
 /**
