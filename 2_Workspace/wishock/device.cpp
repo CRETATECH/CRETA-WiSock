@@ -2,6 +2,7 @@
 * INCLUDE
 ***************************************************************************************/
 #include "device.h"
+#include "button.h"
 #include <ESP8266WiFi.h>
 
 /***************************************************************************************
@@ -22,7 +23,10 @@ void deviceInit(void){
     pinMode(PIN_LED_DEVICE, OUTPUT);
     pinMode(PIN_DEVICE, OUTPUT);
     pinMode(PIN_LED_WIFI, OUTPUT);
-    ledDeviceOff();
+//    if (digitalRead(PIN_BUTTON_CONTROL) == LOW)
+//      deviceOff();
+//    else
+//      deviceOn();
     deviceOff();
 }
 /**
@@ -30,6 +34,7 @@ void deviceInit(void){
  */
 void deviceOn(void){
     digitalWrite(PIN_DEVICE, LOW);
+    ledDeviceOn();
     #ifdef DEBUG
       Serial.println("device on");
     #endif
@@ -39,6 +44,7 @@ void deviceOn(void){
  */
 void deviceOff(void){
     digitalWrite(PIN_DEVICE, HIGH);
+    ledDeviceOff();
     #ifdef DEBUG
       Serial.println("device off");
     #endif

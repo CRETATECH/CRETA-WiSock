@@ -83,7 +83,7 @@ String protocolCreateJson (String pFunc, String pAddr, String pData)
  * @brief       process data when button is pressed
  * @param       none
  * @retval      None
- *              
+ * no toggle device here, toggle in interrupt, just check and publish             
  */
 void protocolButtonProcess (void)
 {
@@ -91,8 +91,6 @@ void protocolButtonProcess (void)
   _time_out = millis();
   if (deviceStatus() == DEVICE_ON)
   {
-    deviceOff();
-    ledDeviceOff();
     while (!mqttConnected())
     {
       if ((millis() - _time_out) > 300)
@@ -102,8 +100,6 @@ void protocolButtonProcess (void)
   }
   else
   {
-    deviceOn();
-    ledDeviceOn();
     while (!mqttConnected())
     {
       if ((millis() - _time_out) > 300)
@@ -183,9 +179,7 @@ int protocolCtrlFunc_Process (void)
       deviceOn();
       delay(50);
       if (deviceStatus() == DEVICE_ON)
-      //if (1 == 1)
       {
-        ledDeviceOn();
         return PROCESS_NORMAL;
       }
       else return PROCESS_ERR;
@@ -195,9 +189,7 @@ int protocolCtrlFunc_Process (void)
       deviceOff();
       delay(50);
       if (deviceStatus() == DEVICE_OFF)
-      //if (1 == 1)
       {
-        ledDeviceOff();
         return PROCESS_NORMAL;
       }
       else return PROCESS_ERR;
