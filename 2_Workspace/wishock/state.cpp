@@ -226,8 +226,8 @@ void Wifi_Connect (void)
   gLedFlag = LED_STATUS_BLINK;
   WiFi.begin();
   #ifdef DEBUG
-  WiFi.printDiag(Serial);
-  Serial.print("\r\nWiFi connecting");
+    WiFi.printDiag(Serial);
+    Serial.print("\r\nWiFi connecting");
   #endif
   while (WiFi.status() != WL_CONNECTED)
   {

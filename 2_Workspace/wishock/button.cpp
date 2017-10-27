@@ -37,7 +37,9 @@ void buttonConfigISRHandler(void){
     static uint32_t _button_last_pressed = 0;
     if((millis() - _button_last_pressed) > 150){
         isButtonPressed = true; //varialbe return to network process
-        Serial.println("nhan nut control");
+        #ifdef DEBUG
+          Serial.println("Control button pressed");
+        #endif
         deviceToggle(); // change state of device         
     }
     _button_last_pressed = millis();

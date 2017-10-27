@@ -157,7 +157,6 @@ int protocolCtrlFunc_Process (String pData)
   {
     if (pData == "On")
     {
-      Serial.println("thuc hien On");
       deviceOn();
       delay(50);
       if (deviceStatus() == DEVICE_ON)
@@ -173,7 +172,6 @@ int protocolCtrlFunc_Process (String pData)
     }
     else if (pData == "Off")
     {
-      Serial.println("thuc hien Off");
       deviceOff();
       delay(50);
       if (deviceStatus() == DEVICE_OFF)
