@@ -18,7 +18,7 @@ String gData = "";
 /***************************************************************************************
 * LOCAL FUNCTIONS PROTOTYPES
 ***************************************************************************************/
-int protocolCtrlFunc_Process (void);
+int protocolCtrlFunc_Process (String pData);
 int protocolDataFunc_Process (void);
 /***************************************************************************************
 * PUBLIC FUNCTION
@@ -132,17 +132,7 @@ void protocolDataProcess (String pJsonRecv)
       #ifdef DEBUG
         Serial.println("func ctrl");
       #endif
-      _temp = protocolCtrlFunc_Process();
-      if (_temp == PROCESS_NORMAL)
-      {
-        mqttPublish(protocolCreateJson("Ctrl", "1", gData)); 
-      }
-      else if (_temp == PROCESS_ERR)
-      {
-        mqttPublish(protocolCreateJson("Ctrl", "1", "ErrProcess"));   
-      }
-      else
-        mqttPublish(protocolCreateJson("Ctrl", "1", "ErrFrame"));
+      _temp = protocolCtrlFunc_Process(gData);
     }
     else if (gFunc == "Data")
     {
@@ -150,16 +140,6 @@ void protocolDataProcess (String pJsonRecv)
         Serial.println("func data");
       #endif
       _temp  = protocolDataFunc_Process();
-      if (_temp == PROCESS_NORMAL)
-      {
-        mqttPublish(protocolCreateJson("Data", "1", gData)); 
-      }
-      else
-        mqttPublish(protocolCreateJson("Ctrl", "1", "ErrFrame"));
-    }
-    else
-    {
-      mqttPublish(protocolCreateJson("Error", "1", "ErrFrame"));    
     }
   }
 }
@@ -171,33 +151,53 @@ void protocolDataProcess (String pJsonRecv)
  *              PROCESS_ERR
  *              FRAME_ERR
  */
-int protocolCtrlFunc_Process (void)
+int protocolCtrlFunc_Process (String pData)
 {
   if (gAddr == "1")
   {
-    if (gData == "On")
+    if (pData == "On")
     {
+      Serial.println("thuc hien On");
       deviceOn();
       delay(50);
       if (deviceStatus() == DEVICE_ON)
       {
+        mqttPublish(protocolCreateJson("Ctrl", "1", "On")); 
         return PROCESS_NORMAL;
       }
-      else return PROCESS_ERR;
+      else
+      {
+        mqttPublish(protocolCreateJson("Error", "1", "ErrProcess"));
+        return PROCESS_ERR;
+      }
     }
-    else if (gData == "Off")
+    else if (pData == "Off")
     {
+      Serial.println("thuc hien Off");
       deviceOff();
       delay(50);
       if (deviceStatus() == DEVICE_OFF)
       {
+        mqttPublish(protocolCreateJson("Ctrl", "1", "Off"));
         return PROCESS_NORMAL;
       }
-      else return PROCESS_ERR;
+      else
+      {
+        mqttPublish(protocolCreateJson("Error", "1", "ErrProcess"));
+        return PROCESS_ERR;
+      }
     }
-    else return FRAME_ERR;
+    else
+    {
+      mqttPublish(protocolCreateJson("Error", "1", "ErrFrame"));  //wrong function
+      return PROCESS_ERR;      
+    }
   }
-  else return FRAME_ERR;
+  else
+  {
+    mqttPublish(protocolCreateJson("Error", "1", "ErrFrame"));  //wrong addr
+    return PROCESS_ERR;  
+  }
 }
 
 /**
@@ -211,10 +211,11 @@ int protocolDataFunc_Process (void)
   if (gAddr == "1")
   {
     if (deviceStatus() == DEVICE_ON)
-    //if (1 == 1)
-      gData = "On";
+    {
+      mqttPublish(protocolCreateJson("Data", "1", "On"));
+    }
     else
-      gData = "Off";
+      mqttPublish(protocolCreateJson("Data", "1", "Off"));
     return PROCESS_NORMAL; 
   }
   else
