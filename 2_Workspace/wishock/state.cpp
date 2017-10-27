@@ -70,6 +70,7 @@ void stateMachine(void){
  */
 void stateUpdate(void){
     /* gState update (if, elseif,...) */
+    /* check config button is pressed or not in control state */
     if (true == buttonConfigCheck())
       gState = STATE_CONFIG;
 }
@@ -118,39 +119,43 @@ void stateSetup (void)
  */
 void stateConfig(void)
 {  
-    gLedFlag = LED_STATUS_OFF;
-    _time = millis();
-    WiFi.mode(WIFI_STA);
-    if(digitalRead(PIN_BUTTON_CONFIG) != LOW){
-    #ifdef DEBUG
-        Serial.println("\r\nStart config...");
-    #endif
-        WiFi.beginSmartConfig();
-        while(1)
-        {
-          delay(1000);
-          if (true == buttonConfigCheck())
-          {
-              gLedFlag = LED_STATUS_ON;
-              while(digitalRead(PIN_BUTTON_CONFIG) == LOW){
-                  delay(1);
-              }
-              gState = STATE_CONTROL;
-              WiFi.stopSmartConfig();
-              return;
+  /* stop to sure can start again */
+  /* in some situation, config with wrong pass can make smartConfig work wrong */
+  WiFi.stopSmartConfig();
+  gLedFlag = LED_STATUS_OFF;
+  _time = millis();
+  WiFi.mode(WIFI_STA);
+  if(digitalRead(PIN_BUTTON_CONFIG) != LOW)
+  {
+  #ifdef DEBUG
+      Serial.println("\r\nStart config...");
+  #endif
+    WiFi.beginSmartConfig();
+    while(1)
+    {
+      delay(1000);
+      if (true == buttonConfigCheck())
+      {
+          gLedFlag = LED_STATUS_ON;
+          while(digitalRead(PIN_BUTTON_CONFIG) == LOW){
+              delay(1);
           }
-          if (WiFi.smartConfigDone())
-          {
-          #ifdef DEBUG
-            Serial.println("Config done!!!\r\n");
-          #endif
-            break;
-          }
-        }
-        /* write 0x05 to address 0x10 to inform that configed */
-        EEPROM_Write_ConfigFlag (0x05);
-        gState = STATE_CONTROL;
+          gState = STATE_CONTROL;
+          WiFi.stopSmartConfig();
+          return;
+      }
+      if (WiFi.smartConfigDone())
+      {
+      #ifdef DEBUG
+        Serial.println("Config done!!!\r\n");
+      #endif
+        break;
+      }
     }
+    /* write 0x05 to address 0x10 to inform that configed */
+    EEPROM_Write_ConfigFlag (0x05);
+    gState = STATE_CONTROL;
+  }
 }
 
 /**
@@ -272,7 +277,7 @@ void TimerISRHandler (void)
 
   else {
     ledWifiOff();
-    if ((millis() - _time) > 5000)
+    if ((millis() - _time) > 10000)
     {
      gLedFlag = LED_STATUS_ON;
      _time = millis();
