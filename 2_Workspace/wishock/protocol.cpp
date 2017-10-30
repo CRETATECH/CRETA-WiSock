@@ -97,7 +97,7 @@ void protocolButtonProcess (void)
       if ((millis() - _time_out) > 300)
         break;
     }
-      mqttPublish(protocolCreateJson("Data", "1", "Off")); 
+      mqttPublish(protocolCreateJson("Data", "1", "On")); 
   }
   else
   {
@@ -106,7 +106,7 @@ void protocolButtonProcess (void)
       if ((millis() - _time_out) > 300)
         break;
     }
-      mqttPublish(protocolCreateJson("Data", "1", "On")); 
+      mqttPublish(protocolCreateJson("Data", "1", "Off")); 
   }
 }
 

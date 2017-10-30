@@ -10,7 +10,7 @@
 /***************************************************************************************
 * LOCAL VARIABLES
 ***************************************************************************************/
-
+uint8_t _button_status;
 /***************************************************************************************
 * EXTERN VARIABLES
 ***************************************************************************************/
@@ -27,6 +27,7 @@ void buttonInit(void){
     /* set Interrupt for BUTTON_CONFIG */
     attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_CONTROL), buttonConfigISRHandler, CHANGE);
     pinMode(PIN_BUTTON_CONTROL, INPUT);
+    _button_status = digitalRead(PIN_BUTTON_CONTROL);
 }
 /**
  * @brief       Button IRS Handler
@@ -34,15 +35,17 @@ void buttonInit(void){
  * process interrupt, change device state and set flag to network process
  */
 void buttonConfigISRHandler(void){
-    static uint32_t _button_last_pressed = 0;
-    if((millis() - _button_last_pressed) > 150){
+    delay(10);
+    uint8_t _current_status = digitalRead(PIN_BUTTON_CONTROL);
+    if(_current_status != _button_status){
         isButtonPressed = true; //varialbe return to network process
         #ifdef DEBUG
           Serial.println("Control button pressed");
         #endif
-        deviceToggle(); // change state of device         
+        deviceToggle(); // change state of device  
+        _button_status = _current_status ;
     }
-    _button_last_pressed = millis();
+    
 }
 /**
  * @brief       Button config check
