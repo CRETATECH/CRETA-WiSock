@@ -35,17 +35,17 @@ void buttonInit(void){
  * process interrupt, change device state and set flag to network process
  */
 void buttonConfigISRHandler(void){
-    delay(10);
-    uint8_t _current_status = digitalRead(PIN_BUTTON_CONTROL);
-    if(_current_status != _button_status){
-        isButtonPressed = true; //varialbe return to network process
-        #ifdef DEBUG
-          Serial.println("Control button pressed");
-        #endif
-        deviceToggle(); // change state of device  
-        _button_status = _current_status ;
+    static uint32_t _button_last_pressed = 0;
+    if((millis() - _button_last_pressed) > 150){
+        if(digitalRead(PIN_BUTTON_CONTROL) != _button_status) {
+            isButtonPressed = true; //varialbe return to network process
+            #ifdef DEBUG
+              Serial.println("Control button pressed");
+            #endif
+            deviceToggle(); // change state of device
+            _button_status = digitalRead(PIN_BUTTON_CONTROL);
+        }
     }
-    
 }
 /**
  * @brief       Button config check
