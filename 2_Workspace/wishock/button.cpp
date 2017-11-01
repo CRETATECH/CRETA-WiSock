@@ -46,7 +46,6 @@ void buttonConfigISRHandler(void){
             _button_status = digitalRead(PIN_BUTTON_CONTROL);
         }
     }
-    _button_last_pressed = millis();
 }
 /**
  * @brief       Button config check
