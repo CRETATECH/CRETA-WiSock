@@ -36,15 +36,18 @@ void buttonInit(void){
  */
 void buttonConfigISRHandler(void){
     static uint32_t _button_last_pressed = 0;
-    if((millis() - _button_last_pressed) > 150){
-        if(digitalRead(PIN_BUTTON_CONTROL) != _button_status) {
-            isButtonPressed = true; //varialbe return to network process
-            #ifdef DEBUG
-              Serial.println("Control button pressed");
-            #endif
-            deviceToggle(); // change state of device
-            _button_status = digitalRead(PIN_BUTTON_CONTROL);
-        }
+    uint16_t _timeout = 0xFF;
+    while(_timeout) {
+        _timeout--;
+        Serial.println(_timeout);
+    }
+    if(digitalRead(PIN_BUTTON_CONTROL) != _button_status) {
+        isButtonPressed = true; //varialbe return to network process
+        #ifdef DEBUG
+          Serial.println("Control button pressed");
+        #endif
+        deviceToggle(); // change state of device
+        _button_status = digitalRead(PIN_BUTTON_CONTROL);
     }
 }
 /**
